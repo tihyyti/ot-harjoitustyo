@@ -1,2 +1,6 @@
-# ot-harjoitustyo
- ohjelmistotekniikka_2024_P2, harjoitustyö
+### ot-harjoitustyo
+
+# Ohjelmistotekniikka, harjoitustyö
+
+Olen tekemässä Pythonilla interaktiivista **bändin keikalle roudattavan kamasetin ja biisilistan suunnitteluun** tarvittavaa
+desktop-sovellusta, joka käyttää PC:ssäni sijaitsevaa *lokaalia relaatiotietokantaa* tiedon hakuun, talletukseen ja päivitykseen.
