@@ -7,4 +7,5 @@ desktop-sovellusta, joka käyttää PC:ssäni sijaitsevaa *lokaalia relaatiotiet
 
 ## Linkit
 
-- Linkki alihakemistoon laskarit (laskarit/viikko1.md)
+- Linkki alihakemistoon laskarit:
+  <https://github.com/tihyyti/ot-harjoitustyo/laskarit/viikko1.md>
