@@ -95,12 +95,13 @@ ALTER TABLE sc_sounds_v1.gearbundle
 
 ALTER TABLE sc_sounds_v1.gearbundle
     ADD CONSTRAINT fk_gearbundle_gearbundlesound
-    FOREIGN KEY (gearbundlesound_id) REFERENCES sc_sounds_v1.gearbundlesound(id);
+    FOREIGN KEY (gearbundlesound_id) REFERENCES sc_sounds_v1.gearbundlesound(id)
+    DEFERRABLE INITIALLY IMMEDIATE;
 
---ALTER TABLE sc_sounds_v1.gearbundlesound
---    ADD CONSTRAINT fk_gearbundlesound_gearbundle
---    FOREIGN KEY (gearbundle_id) REFERENCES sc_sounds_v1.gearbundle(id)
---    DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE sc_sounds_v1.gearbundlesound
+    ADD CONSTRAINT fk_gearbundlesound_gearbundle
+    FOREIGN KEY (gearbundle_id) REFERENCES sc_sounds_v1.gearbundle(id)
+    DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE sc_sounds_v1.artistgearbundle
     ADD CONSTRAINT fk_artistgearbundle_artist
