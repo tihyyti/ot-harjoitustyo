@@ -13,3 +13,6 @@ desktop-sovellusta, joka käyttää PC:ssäni sijaitsevaa *lokaalia relaatiotiet
 - Linkki tiedostoon vaatimusmaarittely.md:
   <https://github.com/tihyyti/ot-harjoitustyo/tree/main/dokumentaatio/vaatimusmaarittely.md>
 
+- Linkki tiedostoon vaatimusmaarittely.md:
+  <https://github.com/tihyyti/ot-harjoitustyo/tree/main/dokumentaatio/vaatimusmaarittely.md>
+
