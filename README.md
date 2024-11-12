@@ -9,3 +9,6 @@ desktop-sovellusta, joka käyttää PC:ssäni sijaitsevaa *lokaalia relaatiotiet
 
 - Linkki alihakemistoon laskarit:
   <https://github.com/tihyyti/ot-harjoitustyo/tree/main/laskarit>
+- Linkki tiedostoon vaatimusmaarittely.md:
+  <https://github.com/tihyyti/ot-harjoitustyo/tree/main/dokumentaatio/vaatimusmaarittely.md>
+
