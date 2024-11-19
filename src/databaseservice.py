@@ -1,4 +1,4 @@
-
+# generoitu koodi alkaa
 import sqlite3
 
 # Note:
@@ -53,6 +53,7 @@ if __name__ == "__main__":
         'bandsocmedgroupname': 'rockers_group'
     }
     db_service.add_band(new_band)
+    # generoitu koodi päättyy. 
 
     band = db_service.get_band_by_name('The Four Camels')
     print(band[2]) 
