@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS sc_sounds_v1.band
+CREATE TABLE IF NOT EXISTS sounds_v1.band
 (
     id serial NOT NULL,
     bandgearbundle_id integer NOT NULL,
@@ -7,9 +7,9 @@ CREATE TABLE IF NOT EXISTS sc_sounds_v1.band
     bandsocmedgroupname varchar(40),
     CONSTRAINT band_pkey PRIMARY KEY (id)
 );
-CREATE INDEX idx_bandname ON sc_sounds_v1.band (bandname);
+CREATE INDEX idx_bandname ON sounds_v1.band (bandname);
 
-CREATE TABLE IF NOT EXISTS sc_sounds_v1.artist
+CREATE TABLE IF NOT EXISTS sounds_v1.artist
 (
     id serial NOT NULL,
     artistband_id integer NOT NULL,
@@ -20,9 +20,9 @@ CREATE TABLE IF NOT EXISTS sc_sounds_v1.artist
     artistrole_2 integer NOT NULL,
     CONSTRAINT artist_pkey PRIMARY KEY (id)
 );
-CREATE INDEX idx_artistname ON sc_sounds_v1.artist (artistname);
+CREATE INDEX idx_artistname ON sounds_v1.artist (artistname);
 
-CREATE TABLE IF NOT EXISTS sc_sounds_v1.gear
+CREATE TABLE IF NOT EXISTS sounds_v1.gear
 (
     id serial NOT NULL,
     gearbundle_id integer NOT NULL,
@@ -31,9 +31,9 @@ CREATE TABLE IF NOT EXISTS sc_sounds_v1.gear
     gearimage_path varchar(255),
     CONSTRAINT gear_pkey PRIMARY KEY (id)
 );
-CREATE INDEX idx_gearname ON sc_sounds_v1.gear (gearname);
+CREATE INDEX idx_gearname ON sounds_v1.gear (gearname);
 
-CREATE TABLE IF NOT EXISTS sc_sounds_v1.gearbundle
+CREATE TABLE IF NOT EXISTS sounds_v1.gearbundle
 (
     id serial NOT NULL,
     gearbundleband_id integer,
@@ -44,9 +44,9 @@ CREATE TABLE IF NOT EXISTS sc_sounds_v1.gearbundle
     gearbundleuserguide varchar(255) NOT NULL,
     CONSTRAINT gearbundle_pkey PRIMARY KEY (id)
 );
-CREATE INDEX idx_gearbundlename ON sc_sounds_v1.gearbundle (gearbundlename);
+CREATE INDEX idx_gearbundlename ON sounds_v1.gearbundle (gearbundlename);
 
-CREATE TABLE IF NOT EXISTS sc_sounds_v1.gearbundlesound
+CREATE TABLE IF NOT EXISTS sounds_v1.gearbundlesound
 (
     id serial NOT NULL,
     gearbundle_id integer NOT NULL,
@@ -55,9 +55,9 @@ CREATE TABLE IF NOT EXISTS sc_sounds_v1.gearbundlesound
     gearbpsoundclip_path varchar(255),
     CONSTRAINT gearbundlesound_pkey PRIMARY KEY (id)
 );
-CREATE INDEX idx_gearbpresetname ON sc_sounds_v1.gearbundlesound (gearbpresetname);
+CREATE INDEX idx_gearbpresetname ON sounds_v1.gearbundlesound (gearbpresetname);
 
-CREATE TABLE IF NOT EXISTS sc_sounds_v1.artistgearbundle
+CREATE TABLE IF NOT EXISTS sounds_v1.artistgearbundle
 (
     id serial NOT NULL,
     artist_id integer NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS sc_sounds_v1.artistgearbundle
     CONSTRAINT artistgearbundle_pkey PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS sc_sounds_v1.bandgearbundle
+CREATE TABLE IF NOT EXISTS sounds_v1.bandgearbundle
 (
     id serial NOT NULL,
     band_id integer NOT NULL,
