@@ -1,0 +1,3 @@
+pyenv install 3.8.10
+pyenv local 3.8.10  # Activate Python 3.8 for the current project
+poetry install

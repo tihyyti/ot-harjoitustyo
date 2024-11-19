@@ -1,3 +1,17 @@
+-- SCHEMA: sc_sounds_v1
+
+-- DROP SCHEMA IF EXISTS sc_sounds_v1 ;
+
+CREATE SCHEMA IF NOT EXISTS sc_sounds_v1
+    AUTHORIZATION postgres;
+
+COMMENT ON SCHEMA sc_sounds_v1
+    IS 'Schema for sounds db.';
+
+GRANT ALL ON SCHEMA sc_sounds_v1 TO postgres;
+
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA sc_sounds_v1
+GRANT ALL ON TABLES TO postgres;
 
 CREATE TABLE IF NOT EXISTS sc_sounds_v1.band
 (
@@ -28,6 +42,7 @@ CREATE TABLE IF NOT EXISTS sc_sounds_v1.gear
     id serial NOT NULL,
     gearbundle_id integer NOT NULL,
     gearname varchar(50) NOT NULL,
+	gearquantity integer NOT NULL,
     gearimage_path varchar(255),
     CONSTRAINT gear_pkey PRIMARY KEY (id)
 );
