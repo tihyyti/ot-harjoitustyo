@@ -20,7 +20,9 @@ CREATE TABLE IF NOT EXISTS artist
     artistname VARCHAR(40) NOT NULL,
     artistpassw VARCHAR(80) NOT NULL,
     artistrole_1 INTEGER NOT NULL,
-    artistrole_2 INTEGER NOT NULL
+    artistrole_2 INTEGER NOT NULL,
+    FOREIGN KEY (artistband_id) REFERENCES band(id),
+    FOREIGN KEY (artistgearbundle_id) REFERENCES gearbundle(id)
 );
 
 -- Create index on artistname
@@ -33,7 +35,8 @@ CREATE TABLE IF NOT EXISTS gear
     gearbundle_id INTEGER NOT NULL,
     gearname VARCHAR(50) NOT NULL,
     gearquantity INTEGER NOT NULL,
-    gearimage_path VARCHAR(255)
+    gearimage_path VARCHAR(255),
+    FOREIGN KEY (gearbundle_id) REFERENCES gearbundle(id)
 );
 
 -- Create index on gearname
@@ -48,7 +51,10 @@ CREATE TABLE IF NOT EXISTS gearbundle
     gearbundlesound_id INTEGER NOT NULL,
     gearbundlename VARCHAR(50) NOT NULL,
     gearbundleimage_path VARCHAR(255),
-    gearbundleuserguide VARCHAR(255) NOT NULL
+    gearbundleuserguide VARCHAR(255) NOT NULL,
+    FOREIGN KEY (gearbundleband_id) REFERENCES band(id),
+    FOREIGN KEY (gearbundleartist_id) REFERENCES artist(id),
+    FOREIGN KEY (gearbundlesound_id) REFERENCES gearbundlesound(id)
 );
 
 -- Create index on gearbundlename
@@ -61,7 +67,8 @@ CREATE TABLE IF NOT EXISTS gearbundlesound
     gearbundle_id INTEGER NOT NULL,
     gearbpresetname VARCHAR(50) NOT NULL,
     gearbpreset_path VARCHAR(255),
-    gearbpsoundclip_path VARCHAR(255)
+    gearbpsoundclip_path VARCHAR(255),
+    FOREIGN KEY (gearbundle_id) REFERENCES gearbundle(id)
 );
 
 -- Create index on gearbpresetname
@@ -72,7 +79,9 @@ CREATE TABLE IF NOT EXISTS artistgearbundle
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     artist_id INTEGER NOT NULL,
-    gearbundle_id INTEGER NOT NULL
+    gearbundle_id INTEGER NOT NULL,
+    FOREIGN KEY (artist_id) REFERENCES artist(id),
+    FOREIGN KEY (gearbundle_id) REFERENCES gearbundle(id)
 );
 
 -- Create bandgearbundle table
@@ -80,56 +89,7 @@ CREATE TABLE IF NOT EXISTS bandgearbundle
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     band_id INTEGER NOT NULL,
-    gearbundle_id INTEGER NOT NULL
+    gearbundle_id INTEGER NOT NULL,
+    FOREIGN KEY (band_id) REFERENCES band(id),
+    FOREIGN KEY (gearbundle_id) REFERENCES gearbundle(id)
 );
-
--- Add foreign key to artist table
-ALTER TABLE artist
-    ADD CONSTRAINT fk_artist_band
-    FOREIGN KEY (artistband_id) REFERENCES band(id);
-
-ALTER TABLE artist
-    ADD CONSTRAINT fk_artist_gearbundle
-    FOREIGN KEY (artistgearbundle_id) REFERENCES gearbundle(id);
-
--- Add foreign key to gear table
-ALTER TABLE gear
-    ADD CONSTRAINT fk_gear_gearbundle
-    FOREIGN KEY (gearbundle_id) REFERENCES gearbundle(id);
-
--- Add foreign key to gearbundle table
-ALTER TABLE gearbundle
-    ADD CONSTRAINT fk_gearbundle_band
-    FOREIGN KEY (gearbundleband_id) REFERENCES band(id);
-
-ALTER TABLE gearbundle
-    ADD CONSTRAINT fk_gearbundle_artist
-    FOREIGN KEY (gearbundleartist_id) REFERENCES artist(id);
-
-ALTER TABLE gearbundle
-    ADD CONSTRAINT fk_gearbundle_gearbundlesound
-    FOREIGN KEY (gearbundlesound_id) REFERENCES gearbundlesound(id);
-
--- Add foreign key to gearbundlesound table
-ALTER TABLE gearbundlesound
-    ADD CONSTRAINT fk_gearbundlesound_gearbundle
-    FOREIGN KEY (gearbundle_id) REFERENCES gearbundle(id);
-
--- Add foreign key to artistgearbundle table
-ALTER TABLE artistgearbundle
-    ADD CONSTRAINT fk_artistgearbundle_artist
-    FOREIGN KEY (artist_id) REFERENCES artist(id);
-
-ALTER TABLE artistgearbundle
-    ADD CONSTRAINT fk_artistgearbundle_gearbundle
-    FOREIGN KEY (gearbundle_id) REFERENCES gearbundle(id);
-
--- Add foreign key to bandgearbundle table
-ALTER TABLE bandgearbundle
-    ADD CONSTRAINT fk_bandgearbundle_band
-    FOREIGN KEY (band_id) REFERENCES band(id);
-
-ALTER TABLE bandgearbundle
-    ADD CONSTRAINT fk_bandgearbundle_gearbundle
-    FOREIGN KEY (gearbundle_id) REFERENCES gearbundle(id);
-
