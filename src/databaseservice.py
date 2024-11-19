@@ -59,3 +59,4 @@ if __name__ == "__main__":
     print(band[2]) 
 
     db_service.close()
+    # generoitu koodi päättyy. 
