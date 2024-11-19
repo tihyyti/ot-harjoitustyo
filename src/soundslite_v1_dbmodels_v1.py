@@ -1,3 +1,4 @@
+ # generoitu koodi alkaa
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
@@ -74,3 +75,4 @@ class BandGearBundle(Base):
     id = Column(Integer, primary_key=True)
     band_id = Column(Integer, ForeignKey('band.id'), nullable=False)
     gearbundle_id = Column(Integer, ForeignKey('gearbundle.id'), nullable=False)
+     # generoitu koodi päättyy. 
