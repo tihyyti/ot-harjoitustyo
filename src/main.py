@@ -53,9 +53,9 @@ def main():
             draw_text(f'Social Media Group: {band.bandsocmedgroupname}', FONT, TEXT_COLOR, screen, 20, 240)
         else:
             draw_text('Band not found!', FONT, TEXT_COLOR, screen, 20, 160)
-         # generoitu koodi päättyy. 
-
+         
         pygame.display.update()
 
 if __name__ == '__main__':
     main()
+     # generoitu koodi päättyy. 
