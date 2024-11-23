@@ -89,7 +89,7 @@ saadaan ORM-rajapinnan avulla korkealla abstraktiotasolla sovelluslogiikan käyt
 loogisia kokonaisuuuksia mahdollisimman riippumattomasti.
 
 *Tietokanta*
-Tietokantana käytetään PostgreSQL-relaatiotietokantaa ja sen palveluita tarjoillaan sopivan ORM-rajapinnan avulla 
+Tietokantana käytetään SQLite-relaatiotietokantaa ja sen palveluita tarjoillaan sopivan ORM-rajapinnan avulla 
 Python-sovellukselle. Silloin kuin sovelluslogiikka on helppo toteuttaa tietokantamekanismien avulla (esim. sql view-
 tekniikalla) näin voidaan menetellä. Perustellusti myös suoraa tietokannan käyttöä voidaan joissain tapauksissa 
 harkita (sql execute-komento).
