@@ -1,4 +1,4 @@
-# generoitu koodi alkaa
+# Generoitu koodi alkaa # Tässä on Copilot assistoinut listan loppuun saakka
 import pygame
 import sys
 from databaseservice import DatabaseService, Band

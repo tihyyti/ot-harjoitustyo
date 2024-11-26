@@ -1,3 +1,4 @@
+# Tässä on Copilot assistoinut listan loppuun saakka
 import pygame
 import sqlite3
 import math

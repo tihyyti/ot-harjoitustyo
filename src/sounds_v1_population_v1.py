@@ -1,3 +1,4 @@
+# Tässä on Copilot assistoinut listan loppuun saakka
 import sqlite3
 
 # Connect to the SQLite database

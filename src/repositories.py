@@ -1,5 +1,6 @@
 import sqlite3
 
+# Tässä on Copilot assistoinut listan loppuun saakka
 class BandRepository:
     def __init__(self, db_path):
         self.db_path = db_path

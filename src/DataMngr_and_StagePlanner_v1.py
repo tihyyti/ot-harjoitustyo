@@ -1,3 +1,4 @@
+# Tässä on Copilot assistoinut listan loppuun saakka
 import pygame
 from services import BandService, ArtistService, GearService, GearBundleService, GearBundleSoundService, BandGearBundleService, ArtistGearBundleService
 

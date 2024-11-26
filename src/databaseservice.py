@@ -1,4 +1,4 @@
-# generoitu koodi alkaa
+# generoitu koodi alkaa # Tässä on Copilot assistoinut listan loppuun saakka
 import sqlite3
 
 # Note:
