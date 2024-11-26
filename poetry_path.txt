@@ -1,1 +1,13 @@
 C:\Users\Composer\.poetry\bin
+
+/home/hytihy/Documents/ot-harjoitustyo/ot-harjoitustyo
+/home/hytihy/Documents/ot-harjoitustyo/ot-harjoitustyo/CREATE_TABLES_sqlite_v1.sql
+/tmp/ot-harjoitustyo/CREATE_TABLES_soundslite_v1.sql
+/home/hytihy/Documents/ot-harjoitustyo/ot-harjoitustyo/CREATE_TABLES_sqlite_v1.sql
+/home/hytihy/Documents/ot-harjoitustyo/ot-harjoitustyo/CREATE_TABLES_sqlite_v1.sql
+/tmp/ot-harjoitustyo/CREATE_TABLES_soundslite_v1.sql
+
+On branch main
+Your branch and 'origin/main' have diverged,
+and have 1 and 4 different commits each, respectively.
+  (use "git pull" to merge the remote branch into yours)
