@@ -16,4 +16,12 @@
 | 24.11.| 10  | Tietokanta-datan keräys ja editointi sekä populointiscriptin teko |
 | 25.11.| 12  | Stage Floor Plannerin viimeistelyä testausta ja korjailua |
 | 26.11.| 14  | Tietokannan populointi, Data Managerin sovellussuunnittelua sekä CRUD-toteutus ja sen testaus, GIT:in siivous |
-| yht   | 117 | 
+| 30.11.| 8   | Mikserisovelluksen suunnittelua ja toteutusta|
+| 01.12.| 12  | Stage Floor Plannerin ja joidenkin Datamanageri osioiden integrointi |
+| 02.12.| 10  | Mikserisovelluksen käyttöliittymän suunnittelu ja toteutus, workflowin, arkkitehtuurin, luokkakaavioiden ja sekvenssikaavioiden hahmoittelua |
+| 03.12.| 9   | Mikseri sovelluksen UI:n testaus ja viimeistely. Kaikki e.m. sovellukset integroivan kerroksen hahmoittelun aloitus, installointiohjeiden teko.|
+| Note: Sovellus on nyt paisunut niin laajaksi ja bändimaailmaan erikoistuneeksi, ettei se enää istu kurssin aikatauluihin ja dokumentointi raahaa jäljessä.
+| Olenkin nyt päättänyt jatkaa tätä projektia mielenkiintoisena ja opettavaisena harrasteprojektina ilman aikataulupaineita. Voisin palata, jos vain sopii, 
+OT-kurssin  harjoitustyöhön sitten taas 2025 P4. Aihe tietenkin on silloin uusi.
+| yht   | 156 | 
+
