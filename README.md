@@ -18,9 +18,9 @@ vahingollisista tavoista, kuten esim. liiallisesta iltasyömisestä, luopumisest
 mikäli aikaa siihen jää. Tekijällä on ilmeinen tarve tälläisen sovelluksen kehittämiseen juuri nyt !
 
 ## Linkit
-[laskarit/viikko1](https://github.com/tihyyti/ot-harjoitustyo/tree/main/laskarit/viikko1.md)
-[laskarit/viikko2](https://github.com/tihyyti/ot-harjoitustyo/tree/main/laskarit/viikko2.md)
+[laskarit/viikko1](https://github.com/tihyyti/ot-harjoitustyo/tree/master/laskarit/viikko1.md)
+[laskarit/viikko2](https://github.com/tihyyti/ot-harjoitustyo/tree/master/laskarit/viikko2.md)
 
 ## Systeemikuvaukset
-[laihduta_nyt_v1](https://github.com/tihyyti/ot-harjoitustyo/tree/main/dokumentaatio/laihduta_nyt_v1.md)
+
 
