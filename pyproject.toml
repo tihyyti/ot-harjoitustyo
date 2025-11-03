@@ -1,7 +1,7 @@
 [project]
 name = "ot-harjoitustyo"
 version = "0.1.0"
-description = "laihduta_nyt"
+description = "laihdutanyt"
 authors = [
     {name = "tihyyti",email = "timo.hyyppa@helsinki.fi"}
 ]
