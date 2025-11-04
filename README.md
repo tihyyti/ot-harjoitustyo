@@ -19,7 +19,6 @@ mikäli aikaa siihen jää.
 
 ## Linkit
 [laskarit/viikko1](https://github.com/tihyyti/ot-harjoitustyo/tree/master/laskarit/viikko1.md)
-[laskarit/viikko2](https://github.com/tihyyti/ot-harjoitustyo/tree/master/laskarit/viikko2.md)
 
 ## Systeemikuvaukset
 
