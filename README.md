@@ -15,7 +15,7 @@ Sovelluksen tiedonhallinta on joustavaa ja perustuu SQLite relaatiotietokantaan.
 Tarvittaessa sovelluksen ydintoiminnallisuutta voidaan, käyttäjän mieltymyksiä kirjaavan 
 toiminnallisuuden perusteella, laajentaa olennaisten ruokavaliosuositusten laadinnassa ja kehotukseen tietyistä 
 vahingollisista tavoista, kuten esim. liiallisesta iltasyömisestä, luopumisesta. Tämä laajennus toteutetaan 
-mikäli aikaa siihen jää. Tekijällä on ilmeinen tarve tälläisen sovelluksen kehittämiseen juuri nyt !
+mikäli aikaa siihen jää.
 
 ## Linkit
 [laskarit/viikko1](https://github.com/tihyyti/ot-harjoitustyo/tree/master/laskarit/viikko1.md)
