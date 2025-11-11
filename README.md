@@ -19,11 +19,12 @@ mikäli aikaa siihen jää.
 
 ## Linkit
 [laskarit/viikko1](https://github.com/tihyyti/ot-harjoitustyo/tree/master/laskarit/viikko1.md)
-[laskarit/viikko1](https://github.com/tihyyti/ot-harjoitustyo/tree/master/laskarit/viikko2.md)
+[laskarit/viikko2](https://github.com/tihyyti/ot-harjoitustyo/tree/master/laskarit/viikko2.md)
 
-Dokumentaatio:
-[laskarit/viikko1](https://github.com/tihyyti/ot-harjoitustyo/tree/master/dokumentaatio/laihdutanyt_functions_and_UIs_v1.pdf)
-[laskarit/viikko1](https://github.com/tihyyti/ot-harjoitustyo/tree/master/dokumentaatio/laihdutanyt_ERD_v2.pdf)
+Dokumentaatio viikko2:
+[laihdutanyt_functions_and_UIs_v1](https://github.com/tihyyti/ot-harjoitustyo/tree/master/dokumentaatio/laihdutanyt_functions_and_UIs_v1.pdf)
+[laihdutanyt_ERD_v2](https://github.com/tihyyti/ot-harjoitustyo/tree/master/dokumentaatio/laihdutanyt_ERD_v2.pdf)
+[laihdutanyt_requirements_specification_v2](https://github.com/tihyyti/ot-harjoitustyo/tree/master/dokumentaatio/laihdutanyt_requirements_specification_v2.md)
 
 ## Systeemikuvaukset:
 
