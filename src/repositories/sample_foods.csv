@@ -1,0 +1,8 @@
+# generoitu koodi alkaa
+name,calories_per_portion,carbs_per_portion,protein_per_portion,fat_per_portion
+Apple,52,14,0.3,0.2
+Banana,89,23,1.1,0.3
+Boiled Egg,155,1.1,13,11
+Chicken Breast (100g),165,0,31,3.6
+Rice (100g cooked),130,28,2.7,0.3
+# generoitu koodi päättyy
