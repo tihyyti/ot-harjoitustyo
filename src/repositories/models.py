@@ -1,12 +1,13 @@
 # Generoitu koodi alkaa
 # models.py
-# Yksinkertaiset dataluokat sovellusolioille
+# Dataluokat sovellusolioille
 
 from dataclasses import dataclass
 from typing import Optional
 
+
 @dataclass
-class user:
+class User:
     user_id: str
     username: str
     password_hash: str
@@ -20,6 +21,7 @@ class user:
     calorie_max: Optional[float] = None
     weight_loss_target: Optional[float] = None
 
+
 @dataclass
 class Food:
     food_id: str
@@ -28,4 +30,42 @@ class Food:
     carbs_per_portion: float
     protein_per_portion: float
     fat_per_portion: float
+
+
 # Generoitu koodi päättyy
+
+
+@dataclass
+class Foodlog:
+    log_id: str
+    user_id: str
+    food_id: str
+    date: str
+    portion_size_g: float
+
+
+@dataclass
+class Activity:
+    activity_id: str
+    name: str
+    unit: str
+    calories_per_unit: float
+
+
+@dataclass
+class Activitylog:
+    log_id: str
+    user_id: str
+    activity_id: str
+    date: str
+    activity_count: float
+    calories_burned: float
+
+
+@dataclass
+class Statistics:
+    user_id: str
+    date: str
+    total_calories_consumed: float
+    total_weight: float
+    weight_change: float

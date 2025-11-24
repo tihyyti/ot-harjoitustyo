@@ -7,12 +7,16 @@ import uuid
 import hashlib
 import os
 from typing import Optional
-import models
+
+# Import the User dataclass from the package
+from repositories.models import User
+
 
 def _hash_password(password: str, salt: bytes, iterations: int = 100_000) -> str:
     # pbkdf2_hmac tuottaa bytes; palautetaan hex
     dk = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, iterations)
     return dk.hex()
+
 
 class UserRepository:
     def __init__(self, db_path: str):
@@ -34,22 +38,28 @@ class UserRepository:
 
         with self._conn() as conn:
             cur = conn.cursor()
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO "user" (
                     user_id, username, password_hash, salt, weight, height, age,
                     activity_level, allergies, calorie_min, calorie_max, weight_loss_target
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                user_id, username, password_hash, salt.hex(),
-                kwargs.get("weight"),
-                kwargs.get("height"),
-                kwargs.get("age"),
-                kwargs.get("activity_level"),
-                kwargs.get("allergies"),
-                kwargs.get("calorie_min"),
-                kwargs.get("calorie_max"),
-                kwargs.get("weight_loss_target")
-            ))
+            """,
+                (
+                    user_id,
+                    username,
+                    password_hash,
+                    salt.hex(),
+                    kwargs.get("weight"),
+                    kwargs.get("height"),
+                    kwargs.get("age"),
+                    kwargs.get("activity_level"),
+                    kwargs.get("allergies"),
+                    kwargs.get("calorie_min"),
+                    kwargs.get("calorie_max"),
+                    kwargs.get("weight_loss_target"),
+                ),
+            )
             conn.commit()
 
         return User(
@@ -86,7 +96,7 @@ class UserRepository:
                 allergies=row["allergies"],
                 calorie_min=row["calorie_min"],
                 calorie_max=row["calorie_max"],
-                weight_loss_target=row["weight_loss_target"]
+                weight_loss_target=row["weight_loss_target"],
             )
 
     def authenticate(self, username: str, password: str) -> bool:
@@ -96,4 +106,6 @@ class UserRepository:
         salt = bytes.fromhex(user.salt)
         expected = _hash_password(password, salt)
         return expected == user.password_hash
-		# Generoitu koodi päättyy
+
+
+# Generoitu koodi päättyy
