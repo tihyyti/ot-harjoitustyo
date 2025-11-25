@@ -41,7 +41,7 @@ class UserRepository:
             cur.execute(
                 """
                 INSERT INTO "user" (
-                    user_id, username, password_hash, salt, weight, height, age,
+                    user_id, username, password_hash, salt, weight, length, age,
                     activity_level, allergies, calorie_min, calorie_max, weight_loss_target
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
@@ -51,7 +51,7 @@ class UserRepository:
                     password_hash,
                     salt.hex(),
                     kwargs.get("weight"),
-                    kwargs.get("height"),
+                    kwargs.get("length"),
                     kwargs.get("age"),
                     kwargs.get("activity_level"),
                     kwargs.get("allergies"),
@@ -68,7 +68,7 @@ class UserRepository:
             password_hash=password_hash,
             salt=salt.hex(),
             weight=kwargs.get("weight"),
-            height=kwargs.get("height"),
+            height=kwargs.get("length"),
             age=kwargs.get("age"),
             activity_level=kwargs.get("activity_level"),
             allergies=kwargs.get("allergies"),
@@ -90,7 +90,7 @@ class UserRepository:
                 password_hash=row["password_hash"],
                 salt=row["salt"],
                 weight=row["weight"],
-                height=row["height"],
+                length=row["length"],
                 age=row["age"],
                 activity_level=row["activity_level"],
                 allergies=row["allergies"],

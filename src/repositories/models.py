@@ -13,7 +13,7 @@ class User:
     password_hash: str
     salt: str
     weight: Optional[float] = None
-    height: Optional[float] = None
+    length: Optional[float] = None
     age: Optional[int] = None
     activity_level: Optional[str] = None
     allergies: Optional[str] = None

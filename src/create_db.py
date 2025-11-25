@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     password_hash TEXT NOT NULL,
     salt TEXT NOT NULL,
     weight REAL,
-    height REAL,
+    length REAL,
     age INTEGER,
     activity_level TEXT,
     allergies TEXT,
@@ -114,7 +114,7 @@ def create_db(path: str = DB_PATH, insert_test: bool = True):
         if insert_test:
             # Insert demo admin and demo user if not exists, and one example food
             # test credentials:
-            test_username = "demo_user"
+            test_username = "demouser"
             test_password = "demopass"
             test_admin = "admin"
             demo_admin_pw = "adminpass"
@@ -127,7 +127,7 @@ def create_db(path: str = DB_PATH, insert_test: bool = True):
                 pwd_hash = _hash_password(test_password, salt)
                 cur.execute("""
                     INSERT INTO "user" (
-                        user_id, username, password_hash, salt, weight, height, age
+                        user_id, username, password_hash, salt, weight, length, age
                     ) VALUES (?, ?, ?, ?, ?, ?, ?)
                 """, (user_id, test_username, pwd_hash, salt.hex(), 80.0, 175.0, 35))
                 print(f"Inserted test user: username='{test_username}', password='{test_password}'")
