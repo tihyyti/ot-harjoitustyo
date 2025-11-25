@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS admin (
 -- FOOD
 CREATE TABLE IF NOT EXISTS food (
     food_id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
+    name TEXT,
     calories_per_portion REAL,
     carbs_per_portion REAL,
     protein_per_portion REAL,
@@ -117,7 +117,7 @@ def create_db(path: str = DB_PATH, insert_test: bool = True):
             test_username = "demouser"
             test_password = "demopass"
             test_admin = "admin"
-            demo_admin_pw = "adminpass"
+            test_admin_pw = "adminpass"
 
             # Check and insert test user
             cur.execute('SELECT 1 FROM "user" WHERE username = ?', (test_username,))
@@ -153,6 +153,16 @@ def create_db(path: str = DB_PATH, insert_test: bool = True):
                     VALUES (?, ?, ?, ?, ?, ?)
                 """, (food_id, "Apple", 52.0, 14.0, 0.3, 0.2))
                 print("Inserted sample food: Apple")
+                
+            # Insert a sample activity row
+            cur.execute("SELECT 1 FROM activity WHERE name = ?", ("walking",))
+            if not cur.fetchone():
+                activity_id = str(uuid.uuid4())
+                cur.execute("""
+                    INSERT INTO activity (activity_id, name, calories_per_unit)
+                    VALUES (?, ?, ?)
+                """, (activity_id, "walking", 30.0))
+                print("Inserted sample activity: walking")
 
             conn.commit()
     finally:

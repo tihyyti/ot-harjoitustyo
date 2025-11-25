@@ -24,6 +24,8 @@ from datetime import date
 from repositories.user_repository import UserRepository
 from repositories.food_repository import FoodRepository
 from repositories.foodlog_repository import FoodLogRepository
+from repositories.activity_repository import ActivityRepository
+from repositories.activitylog_repository import ActivityLogRepository
 
 BASE_DIR = os.path.dirname(__file__)
 DB_PATH = os.path.join(BASE_DIR, "data", "laihdutanyt.db")
@@ -250,9 +252,9 @@ class AllLogsWindow(tk.Toplevel):
         rows = self.log_repo.find_all_for_user(self.user_id)
         for r in rows:
             cal_per = r.get("calories_per_portion") or 0.0
-            unitlot = r.get("units_lot") or 0.0
-            total_cal = (unitlot / 100.0) * cal_per
-            self.tree.insert("", "end", values=(r.get("date"), r.get("name"), f"{calories_burned_burned}", f"{total_cal:.1f}", r.get("log_id")))
+            portion = r.get("portion") or 0.0
+            total_cal = (portion / 100.0) * cal_per
+            self.tree.insert("", "end", values=(r.get("date"), r.get("name"), f"{total_cal:.1f}", f"{total_cal:.1f}", r.get("log_id")))
 
     def _selected_log(self):
         sel = self.tree.selection()
@@ -332,13 +334,13 @@ class ActivityLogFrame(tk.Frame):
 
         tk.Label(topframe, text="Activity").grid(row=1, column=0, sticky="e")
         tk.Label(topframe, text="Unit (steps)").grid(row=1, column=2, sticky="e")
-        tk.Label(topframe, text="Date (YYYY-MM-DD)").grid(row=2, column=0, sticky="e")
+        tk.Label(topframe, text="Date (YYYY-MM-DD)").grid(row=2, column=1, sticky="e")
 
         self.activity_var = tk.StringVar()
         self.unit_var = tk.StringVar(value="100")
         self.date_var = tk.StringVar(value=date.today().isoformat())
 
-        self.activity_cb = ttk.Combobox(topframe, textvariable=self.activity_var, state="readonly", width=40)
+        self.activity_cb = ttk.Combobox(topframe, textvariable=self.activity_var, state="readonly", width=16)
         self.activity_cb.grid(row=1, column=1, padx=5, pady=2)
         tk.Entry(topframe, textvariable=self.unit_var, width=10).grid(row=1, column=3, padx=5)
         tk.Entry(topframe, textvariable=self.date_var, width=15).grid(row=2, column=1, padx=5)
@@ -358,11 +360,11 @@ class ActivityLogFrame(tk.Frame):
 
     def refresh_logs(self):
         self.logs_list.delete(0, tk.END)
-        rows = self.log_repo.find_by_user_and_date(self.user_id, self.date_var.get())
+        rows = self.activitylog_repo.find_by_user_and_date(self.user_id, self.date_var.get())
         for r in rows:
             name = r.get("name") or "?"
             unit = r.get("units") or 0
-            cal_per = r.get("calories_burned") or 0
+            cal_per = r.get("calories_per_unit") or 0
             total_cal = (unit) * cal_per
             self.logs_list.insert(tk.END, f"{r['date']} - {name} {unit}g ({total_cal:.1f} kcal)")
 
@@ -383,7 +385,7 @@ class ActivityLogFrame(tk.Frame):
             messagebox.showwarning("Invalid unit", "Unit must be integer.")
             return
         date_str = self.date_var.get().strip()
-        self.log_repo.create_log(self.user_id, activity_id, date_str, unit)
+        self.activitylog_repo.create_log(self.user_id, activity_id, date_str, unit, activity_count)
         messagebox.showinfo("Saved", "Activity log saved.")
         self.refresh_logs()
         
@@ -408,13 +410,13 @@ class AllLogsWindow(tk.Toplevel):
         tk.Entry(top, textvariable=self.search_var, width=30).pack(side="right")
         tk.Button(top, text="Refresh", command=self.refresh).pack(side="right", padx=5)
 
-        # Treeview with columns: date, activity name, unit, calories_burned
-        columns = ("date", "activity", "unit", "calories_burned_burned", "log_id")
+        # Treeview with columns: date, activity name, unit, calories_per_unit
+        columns = ("date", "activity", "unit", "calories_per_unit", "log_id")
         self.tree = ttk.Treeview(self, columns=columns, show="headings", selectmode="browse")
         self.tree.heading("date", text="Date")
         self.tree.heading("activity", text="Activity")
         self.tree.heading("unit", text="Unit (steps)")
-        self.tree.heading("calories_burned", text="Calories burned")
+        self.tree.heading("calories_per_unit", text="Calories per unit")
         # log_id column hidden
         self.tree.column("log_id", width=0, stretch=False)
         self.tree.pack(fill="both", expand=True, padx=5, pady=5)
@@ -524,8 +526,8 @@ class App(tk.Tk):
         self.user_repo = UserRepository(db_path)
         self.food_repo = FoodRepository(db_path)
         self.foodlog_repo = FoodLogRepository(db_path)
-        self.food_repo = ActivityRepository(db_path)
-        self.foodlog_repo = ActivityLogRepository(db_path)
+        self.activity_repo = ActivityRepository(db_path)
+        self.activitylog_repo = ActivityLogRepository(db_path)
         self._build_login()
         self._build_menu()
 
@@ -533,7 +535,8 @@ class App(tk.Tk):
         menubar = tk.Menu(self)
         filemenu = tk.Menu(menubar, tearoff=0)
         filemenu.add_command(label="Import Foods (CSV)", command=self._on_import_foods)
-        filemenu.add_command(label="Package Project", command=self._on_package_project)
+        filemenu.add_command(label="Import Activities (CSV)", command=self._on_import_activities)
+        #filemenu.add_command(label="Package Project", command=self._on_package_project)
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command=self.destroy)
         menubar.add_cascade(label="File", menu=filemenu)
@@ -544,11 +547,23 @@ class App(tk.Tk):
         if not filename:
             return
         try:
-            mod = importlib.import_module("scripts.import_foods")
+            mod = importlib.import_module("scripts.import_foods.py")
             mod.import_csv(filename, self.db_path)
             messagebox.showinfo("Import complete", f"Imported foods from {os.path.basename(filename)}")
         except Exception as e:
             messagebox.showerror("Import error", f"Import failed: {e}")
+            
+    def _on_import_activities(self):
+        filename = filedialog.askopenfilename(title="Select activities CSV", filetypes=[("CSV files", "*.csv"), ("All files", "*.*")])
+        if not filename:
+            return
+        try:
+            mod = importlib.import_module("scripts.import_activities.py")
+            mod.import_csv(filename, self.db_path)
+            messagebox.showinfo("Import complete", f"Imported activities from {os.path.basename(filename)}")
+        except Exception as e:
+            messagebox.showerror("Import error", f"Import failed: {e}")
+
 
     def _on_package_project(self):
         try:
@@ -579,9 +594,9 @@ class App(tk.Tk):
             messagebox.showerror("Error", "User record not found after login.")
             return
         self.login_frame.pack_forget()
-        self.dashboard_food = Dashboard(self, username, self.db_path, user.user_id)
+        self.dashboard_food = Dashboard_food(self, username, self.db_path, user.user_id)
         self.dashboard_food.pack(expand=True, fill="both")
-        self.dashboard_activity = Dashboard(self, username, self.db_path, user.user_id)
+        self.dashboard_activity = Dashboard_activity(self, username, self.db_path, user.user_id)
         self.dashboard_activity.pack(expand=True, fill="both")
 
 def main():
@@ -594,4 +609,4 @@ def main():
 if __name__ == "__main__":
     main()
 	
-# generoitu koodi päättyy
+# modifioitu generoitu koodi päättyy

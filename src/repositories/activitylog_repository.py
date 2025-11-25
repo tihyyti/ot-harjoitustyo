@@ -1,4 +1,5 @@
-# generoitu koodi alkaa
+# week 4: modifioitu generoitu koodi alkaa
+# activitylog_repository.py
 """
 activitylogRepository: SQLite-repos for food logs.
 Methods:
@@ -52,7 +53,7 @@ class ActivityLogRepository:
         with self._conn() as conn:
             cur = conn.cursor()
             cur.execute(
-                "SELECT fl.*, f.name, f.calories_per_portion FROM activitylog fl JOIN food f ON fl.food_id = f.food_id WHERE fl.user_id = ? AND fl.date = ? ORDER BY fl.date",
+                "SELECT al.*, a.name, a.calories_per_unit FROM activitylog al JOIN activity a ON al.activity_id = a.activity_id WHERE al.user_id = ? AND al.date = ? ORDER BY al.date DESC",
                 (user_id, date),
             )
             return [dict(r) for r in cur.fetchall()]
@@ -61,9 +62,9 @@ class ActivityLogRepository:
         with self._conn() as conn:
             cur = conn.cursor()
             cur.execute(
-                "SELECT fl.*, f.name, f.calories_per_portion FROM activitylog fl JOIN food f ON fl.food_id = f.food_id WHERE fl.user_id = ? ORDER BY fl.date DESC",
-                (user_id,),
+                "SELECT al.*, a.name, a.calories_per_unit FROM activitylog al JOIN activity a ON al.activity_id = a.activity_id WHERE al.user_id = ? AND al.date = ? ORDER BY al.date DESC",
+                (user_id),
             )
             return [dict(r) for r in cur.fetchall()]
 
-        # generoitu koodi päättyy
+        # week 4: modifioitu generoitu koodi päättyy
