@@ -5,4 +5,6 @@
 | 03.11.| 3    | Tutustuminen harj.työn ohjeisiin ja GIT-repon sekä tiedostojen alustustoimet |
 | 04.11.| 8    | Työkalujen valinta (Python 3.10 ja Tkinter, Chubli environment), alustava vaatimusten määrittely|
 | 11.11 | 7    | Vaatimusmäärittely, usecaset ja storyt, UI-kaavio, ERD-diagrammi, Chubblin ja lokaalikoneen tiedostosiirron opettelu||
-| 18.11 | 10   | |
+| 18.11 | 10   | Added food and foodlog sql-tabless and model classes plus their processing in Laihdutanyt_v1
+| 25.11 | 19   | Added activity and activitylog sql-tables and model classes, their processing in Laihdutanyt_v1
+|       |      | plus import activities-script, created new laihdutanyt.db. Testing of all pending.
