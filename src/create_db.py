@@ -1,5 +1,6 @@
 
-# generoitu koodi alkaa
+# Week 5: Refactoroitu, aiemmin generoitu koodi alkaa
+# New fields in user table and sample activity data insertion
 """
 Create SQLite database and insert test data for laihdutanyt app.
 python3 create_db.py
@@ -25,10 +26,10 @@ CREATE TABLE IF NOT EXISTS "user" (
     weight REAL,
     length REAL,
     age INTEGER,
-    activity_level TEXT,
+    activity_level INTEGER,
     allergies TEXT,
-    calorie_min REAL,
-    calorie_max REAL,
+    kcal_min REAL,
+    kcal_max REAL,
     weight_loss_target REAL,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
@@ -46,7 +47,7 @@ CREATE TABLE IF NOT EXISTS admin (
 CREATE TABLE IF NOT EXISTS food (
     food_id TEXT PRIMARY KEY,
     name TEXT,
-    calories_per_portion REAL,
+    kcal_per_portion REAL,
     carbs_per_portion REAL,
     protein_per_portion REAL,
     fat_per_portion REAL
@@ -68,7 +69,7 @@ CREATE TABLE IF NOT EXISTS activity (
     activity_id TEXT PRIMARY KEY,
     name TEXT,
     unit TEXT,
-    calories_per_unit REAL
+    kcal_per_unit REAL
 );
 
 -- ACTIVITYLOG
@@ -78,7 +79,7 @@ CREATE TABLE IF NOT EXISTS activitylog (
     activity_id TEXT NOT NULL,
     date TEXT NOT NULL,
     activity_count REAL,
-    calories_burned REAL,
+    kcal_burned REAL,
     FOREIGN KEY(user_id) REFERENCES "user"(user_id) ON DELETE CASCADE,
     FOREIGN KEY(activity_id) REFERENCES activity(activity_id) ON DELETE SET NULL
 );
@@ -88,7 +89,7 @@ CREATE TABLE IF NOT EXISTS statistics (
     stats_id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
     date TEXT NOT NULL,
-    total_calories_consumed REAL,
+    total_kcal_consumed REAL,
     total_weight REAL,
     weight_change REAL,
     FOREIGN KEY(user_id) REFERENCES "user"(user_id) ON DELETE CASCADE
@@ -114,10 +115,10 @@ def create_db(path: str = DB_PATH, insert_test: bool = True):
         if insert_test:
             # Insert demo admin and demo user if not exists, and one example food
             # test credentials:
-            test_username = "demouser"
-            test_password = "demopass"
+            test_username = "user"
+            test_password = "pass"
             test_admin = "admin"
-            test_admin_pw = "adminpass"
+            test_admin_pw = "apass"
 
             # Check and insert test user
             cur.execute('SELECT 1 FROM "user" WHERE username = ?', (test_username,))
@@ -127,9 +128,9 @@ def create_db(path: str = DB_PATH, insert_test: bool = True):
                 pwd_hash = _hash_password(test_password, salt)
                 cur.execute("""
                     INSERT INTO "user" (
-                        user_id, username, password_hash, salt, weight, length, age
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (user_id, test_username, pwd_hash, salt.hex(), 80.0, 175.0, 35))
+                        user_id, username, password_hash, salt, weight, length, age, activity_level, allergies, kcal_min, kcal_max, weight_loss_target
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+                """, (user_id, test_username, pwd_hash, salt.hex(), 80.0, 175.0, 35, 2, "Citrus", 1500, 2500, 5))
                 print(f"Inserted test user: username='{test_username}', password='{test_password}'")
 
             # Check and insert test admin
@@ -149,7 +150,7 @@ def create_db(path: str = DB_PATH, insert_test: bool = True):
             if not cur.fetchone():
                 food_id = str(uuid.uuid4())
                 cur.execute("""
-                    INSERT INTO food (food_id, name, calories_per_portion, carbs_per_portion, protein_per_portion, fat_per_portion)
+                    INSERT INTO food (food_id, name, kcal_per_portion, carbs_per_portion, protein_per_portion, fat_per_portion)
                     VALUES (?, ?, ?, ?, ?, ?)
                 """, (food_id, "Apple", 52.0, 14.0, 0.3, 0.2))
                 print("Inserted sample food: Apple")
@@ -159,7 +160,7 @@ def create_db(path: str = DB_PATH, insert_test: bool = True):
             if not cur.fetchone():
                 activity_id = str(uuid.uuid4())
                 cur.execute("""
-                    INSERT INTO activity (activity_id, name, calories_per_unit)
+                    INSERT INTO activity (activity_id, name, kcal_per_unit)
                     VALUES (?, ?, ?)
                 """, (activity_id, "walking", 30.0))
                 print("Inserted sample activity: walking")
@@ -171,4 +172,4 @@ def create_db(path: str = DB_PATH, insert_test: bool = True):
 if __name__ == "__main__":
     create_db()
     
-# generoitu koodi päättyy
+# Refactoroitu, aiemmin generoitu koodi päättyy

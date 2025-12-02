@@ -39,14 +39,14 @@ class FoodRepository:
             row = cur.fetchone()
             return dict(row) if row else None
 
-    def create(self, name: str, calories_per_portion: float, carbs: float = 0.0, protein: float = 0.0, fat: float = 0.0) -> Dict:
+    def create(self, name: str, kcal_per_portion: float, carbs: float = 0.0, protein: float = 0.0, fat: float = 0.0) -> Dict:
         food_id = str(uuid.uuid4())
         with self._conn() as conn:
             cur = conn.cursor()
             cur.execute("""
-                INSERT INTO food (food_id, name, calories_per_portion, carbs_per_portion, protein_per_portion, fat_per_portion)
+                INSERT INTO food (food_id, name, kcal_per_portion, carbs_per_portion, protein_per_portion, fat_per_portion)
                 VALUES (?, ?, ?, ?, ?, ?)
-            """, (food_id, name, calories_per_portion, carbs, protein, fat))
+            """, (food_id, name, kcal_per_portion, carbs, protein, fat))
             conn.commit()
         return self.find_by_id(food_id)
     # generoitu koodi päättyy

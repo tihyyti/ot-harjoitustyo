@@ -1,6 +1,6 @@
-# Generoitu koodi alkaa
-# repositories/user_repository.py
-# SQLite-pohjainen UserRepository: create, find_by_username, authenticate
+# Refactoroitu, aiemmin generoitu koodi alkaa
+# expanded user-record of repositories/user_repository.py
+# SQLite: UserRepository: create, find_by_username, authenticate
 
 import sqlite3
 import uuid
@@ -42,7 +42,7 @@ class UserRepository:
                 """
                 INSERT INTO "user" (
                     user_id, username, password_hash, salt, weight, length, age,
-                    activity_level, allergies, calorie_min, calorie_max, weight_loss_target
+                    activity_level, allergies, kcal_min, kcal_max, weight_loss_target
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
                 (
@@ -55,8 +55,8 @@ class UserRepository:
                     kwargs.get("age"),
                     kwargs.get("activity_level"),
                     kwargs.get("allergies"),
-                    kwargs.get("calorie_min"),
-                    kwargs.get("calorie_max"),
+                    kwargs.get("kcal_min"),
+                    kwargs.get("kcal_max"),
                     kwargs.get("weight_loss_target"),
                 ),
             )
@@ -68,12 +68,12 @@ class UserRepository:
             password_hash=password_hash,
             salt=salt.hex(),
             weight=kwargs.get("weight"),
-            height=kwargs.get("length"),
+            length=kwargs.get("length"),
             age=kwargs.get("age"),
             activity_level=kwargs.get("activity_level"),
             allergies=kwargs.get("allergies"),
-            calorie_min=kwargs.get("calorie_min"),
-            calorie_max=kwargs.get("calorie_max"),
+            kcal_min=kwargs.get("kcal_min"),
+            kcal_max=kwargs.get("kcal_max"),
             weight_loss_target=kwargs.get("weight_loss_target"),
         )
 
@@ -94,8 +94,8 @@ class UserRepository:
                 age=row["age"],
                 activity_level=row["activity_level"],
                 allergies=row["allergies"],
-                calorie_min=row["calorie_min"],
-                calorie_max=row["calorie_max"],
+                kcal_min=row["kcal_min"],
+                kcal_max=row["kcal_max"],
                 weight_loss_target=row["weight_loss_target"],
             )
 
@@ -108,4 +108,4 @@ class UserRepository:
         return expected == user.password_hash
 
 
-# Generoitu koodi päättyy
+# Refactoroitu, aiemmin generoitu koodi päättyy

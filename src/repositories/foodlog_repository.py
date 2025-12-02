@@ -41,13 +41,13 @@ class FoodLogRepository:
     def find_by_user_and_date(self, user_id: str, date: str) -> List[Dict]:
         with self._conn() as conn:
             cur = conn.cursor()
-            cur.execute("SELECT fl.*, f.name, f.calories_per_portion FROM foodlog fl JOIN food f ON fl.food_id = f.food_id WHERE fl.user_id = ? AND fl.date = ? ORDER BY fl.date", (user_id, date))
+            cur.execute("SELECT fl.*, f.name, f.kcal_per_portion FROM foodlog fl JOIN food f ON fl.food_id = f.food_id WHERE fl.user_id = ? AND fl.date = ? ORDER BY fl.date", (user_id, date))
             return [dict(r) for r in cur.fetchall()]
 
     def find_all_for_user(self, user_id: str) -> List[Dict]:
         with self._conn() as conn:
             cur = conn.cursor()
-            cur.execute("SELECT fl.*, f.name, f.calories_per_portion FROM foodlog fl JOIN food f ON fl.food_id = f.food_id WHERE fl.user_id = ? ORDER BY fl.date DESC", (user_id,))
+            cur.execute("SELECT fl.*, f.name, f.kcal_per_portion FROM foodlog fl JOIN food f ON fl.food_id = f.food_id WHERE fl.user_id = ?", (user_id,))
             return [dict(r) for r in cur.fetchall()]
         
         # generoitu koodi päättyy

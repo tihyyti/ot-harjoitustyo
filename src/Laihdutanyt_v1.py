@@ -1,18 +1,25 @@
+# Refactoroitu, alussa generoitu koodi alkaa 
 
-# modifioitu generoitu koodi alkaa 
 # Week 4: added manually new features:
 # - activities handling + UI
 # - activitieslog handling + UI
 # - testing and corrections
+
+# Week 5: added manually new features:
+# - All UI functions and mental model refactored
+# - UI and Database tested together
+# - Components implemented: Main button-menu
+#   Food and Activity Dashboards and data logging
+#   Food and Activity Loggings viewing windows with Edit/Delete functionality
 """
 laihdutanyt_v1.py 
 Tkinter with:
- - Food CRUD
- - Food Logging UI
  - Import Foods (CSV)
- - Activity CRUD
- - Activity Logging
- - View All Logs window with Edit/Delete functionality
+ - Import Activities (CSV)
+ - Main Button-menu
+ - Food Logging Dashboard
+ - Activity Logging Dashboard
+ - View Foods and Activities All Logs windows with Edit/Delete functionality
 """
 
 import os
@@ -20,6 +27,7 @@ import tkinter as tk
 from tkinter import messagebox, filedialog, ttk, simpledialog
 import importlib
 from datetime import date
+from typing import Optional
 
 from repositories.user_repository import UserRepository
 from repositories.food_repository import FoodRepository
@@ -38,7 +46,7 @@ class LoginFrame(tk.Frame):
         self._build()
 
     def _build(self):
-        tk.Label(self, text="Login", font=("Arial", 18)).grid(row=0, column=0, columnspan=2, pady=5)
+        tk.Label(self, text="Login", font=("Arial", 18)).grid(row=0, column=0, columnspan=2, pady=8)
         tk.Label(self, text="Username").grid(row=1, column=0, sticky="e")
         tk.Label(self, text="Password").grid(row=2, column=0, sticky="e")
 
@@ -75,31 +83,58 @@ class RegisterWindow(tk.Toplevel):
         self._build()
 
     def _build(self):
-        tk.Label(self, text="Create new user", font=("Arial", 18)).grid(row=0, column=0, columnspan=2, pady=5)
+        tk.Label(self, text="Create new user", font=("Arial", 18)).grid(row=0, column=0, columnspan=2, pady=8)
         tk.Label(self, text="Username").grid(row=1, column=0, sticky="e")
         tk.Label(self, text="Password").grid(row=2, column=0, sticky="e")
         tk.Label(self, text="Weight (kg)").grid(row=3, column=0, sticky="e")
         tk.Label(self, text="Length (cm)").grid(row=4, column=0, sticky="e")
-        tk.Label(self, text="Age (kg)").grid(row=5, column=0, sticky="e")
+        tk.Label(self, text="Age").grid(row=5, column=0, sticky="e")
+        tk.Label(self, text="Activity Level").grid(row=6, column=0, sticky="e")
+        tk.Label(self, text="Allergies").grid(row=7, column=0, sticky="e")
+        tk.Label(self, text="Kcal Min").grid(row=8, column=0, sticky="e")
+        tk.Label(self, text="Kcal Max").grid(row=9, column=0, sticky="e")
+        tk.Label(self, text="Weight Loss Target").grid(row=10, column=0, sticky="e")
 
         self.username_var = tk.StringVar()
         self.password_var = tk.StringVar()
         self.weight_var = tk.StringVar()
         self.length_var = tk.StringVar()
         self.age_var = tk.StringVar()
+        self.activity_level_var = tk.StringVar()
+        self.allergies_var = tk.StringVar()
+        self.kcal_min_var = tk.StringVar()
+        self.kcal_max_var = tk.StringVar()
+        self.weight_loss_target_var = tk.StringVar()
 
         tk.Entry(self, textvariable=self.username_var).grid(row=1, column=1)
         tk.Entry(self, textvariable=self.password_var, show="*").grid(row=2, column=1)
         tk.Entry(self, textvariable=self.weight_var).grid(row=3, column=1)
         tk.Entry(self, textvariable=self.length_var).grid(row=4, column=1)
         tk.Entry(self, textvariable=self.age_var).grid(row=5, column=1)
-
-        tk.Button(self, text="Create user", command=self._on_create).grid(row=4, column=0, columnspan=2, pady=10)
+        tk.Entry(self, textvariable=self.activity_level_var).grid(row=6, column=1)
+        tk.Entry(self, textvariable=self.allergies_var).grid(row=7, column=1)
+        tk.Entry(self, textvariable=self.kcal_min_var).grid(row=8, column=1)
+        tk.Entry(self, textvariable=self.kcal_max_var).grid(row=9, column=1)
+        tk.Entry(self, textvariable=self.weight_loss_target_var).grid(row=10, column=1)
+        tk.Button(self, text="Create user", command=self._on_create).grid(row=11, column=0, columnspan=2, pady=8)
 
     def _on_create(self):
         username = self.username_var.get().strip()
         password = self.password_var.get()
-        weight = None
+        weight = self.weight_var.get()
+        length = self.length_var.get()
+        age = self.age_var.get()
+        activity_level = self.activity_level_var.get()
+        allergies = self.allergies_var.get()
+        kcal_min = self.kcal_min_var.get()
+        kcal_max = self.kcal_max_var.get()
+        weight_loss_target = self.weight_loss_target_var.get()
+
+        existing = self.user_repo.find_by_username(username)
+        if existing:
+            messagebox.showerror("Error", "Username already taken.")
+            return
+
         try:
             if self.weight_var.get().strip():
                 weight = float(self.weight_var.get().strip())
@@ -120,16 +155,42 @@ class RegisterWindow(tk.Toplevel):
         except ValueError:
             messagebox.showwarning("Error", "Age must be integer.")
             return
-
-        if not username or not password:
-            messagebox.showwarning("Missing info", "Enter username and password.")
+        
+        try:
+            if self.activity_level_var.get().strip():
+                activity_level = float(self.activity_level_var.get().strip())
+        except ValueError:
+            messagebox.showwarning("Error", "Enter activity level 1 =young, 2 =middle-aged, 3 =senior, 4 =elderly.")
             return
-
-        existing = self.user_repo.find_by_username(username)
-        if existing:
-            messagebox.showerror("Error", "Username already taken.")
+        
+        try:
+            if self.allergies_var.get().strip():
+                allergies = self.allergies_var.get().strip()            
+        except ValueError:
+            messagebox.showwarning("Error", "allergies must be string.")
             return
-
+        
+        try:
+            if self.kcal_min_var.get().strip():
+                kcal_min = float(self.kcal_min_var.get().strip())
+        except ValueError:
+            messagebox.showwarning("Error", "kcal_min must be integer.")
+            return
+        
+        try:
+            if self.kcal_max_var.get().strip():
+                kcal_max = float(self.kcal_max_var.get().strip())
+        except ValueError:
+            messagebox.showwarning("Error", "kcal_max must be integer.")
+            return
+        
+        try:
+            if self.weight_loss_target_var.get().strip():
+                weight_loss_target = float(self.weight_loss_target_var.get().strip())
+        except ValueError:
+            messagebox.showwarning("Error", "weight loss target must be numeric.")
+            return
+        
         user = self.user_repo.create_user(username, password, weight=weight)
         messagebox.showinfo("Done", f"User created: {user.username}")
         self.destroy()
@@ -140,51 +201,50 @@ class FoodLogFrame(tk.Frame):
         self.db_path = db_path
         self.user_id = user_id
         self.food_repo = FoodRepository(db_path)
-        self.log_repo = FoodLogRepository(db_path)
+        self.foodlog_repo = FoodLogRepository(db_path)
         self._build()
         self.refresh_foods()
         self.refresh_logs()
 
     def _build(self):
         topframe = tk.Frame(self)
-        topframe.pack(fill="x", padx=5, pady=5)
+        topframe.pack(fill="x", padx=5, pady=8)
 
-        tk.Label(topframe, text="Add food log").grid(row=0, column=0, columnspan=4)
-
-        tk.Label(topframe, text="Food").grid(row=1, column=0, sticky="e")
-        tk.Label(topframe, text="Portion (g)").grid(row=1, column=2, sticky="e")
-        tk.Label(topframe, text="Date (YYYY-MM-DD)").grid(row=2, column=0, sticky="e")
+        tk.Label(topframe, text="Food").grid(row=0, column=0, sticky="w")
+        tk.Label(topframe, text="Portion(g)").grid(row=1, column=0, sticky="w")
+        tk.Label(topframe, text="YYYY-MM-DD").grid(row=2, column=0, sticky="w")
 
         self.food_var = tk.StringVar()
-        self.portion_var = tk.StringVar(value="100")
+        self.portion_var = tk.StringVar(value="100") # 1 portion = 100 g
         self.date_var = tk.StringVar(value=date.today().isoformat())
 
-        self.food_cb = ttk.Combobox(topframe, textvariable=self.food_var, state="readonly", width=40)
-        self.food_cb.grid(row=1, column=1, padx=5, pady=2)
-        tk.Entry(topframe, textvariable=self.portion_var, width=10).grid(row=1, column=3, padx=5)
-        tk.Entry(topframe, textvariable=self.date_var, width=15).grid(row=2, column=1, padx=5)
+        self.food_cb = ttk.Combobox(topframe, textvariable=self.food_var, state="readonly", width=20)
+        self.food_cb.grid(row=0, column=1, padx=5, pady=8, sticky="e")
+        tk.Entry(topframe, textvariable=self.portion_var, width=10).grid(row=1, column=1, padx=5, pady=8, sticky="e")
+        tk.Entry(topframe, textvariable=self.date_var, width=15).grid(row=2, column=1, padx=5, pady=8, sticky="e")
 
-        tk.Button(topframe, text="Add Log", command=self._on_add).grid(row=3, column=0, columnspan=4, pady=8)
+        tk.Button(topframe, text="Add to Log", command=self._on_add).grid(row=3, column=0, columnspan=4, pady=8)
 
         # logs list
         self.logs_list = tk.Listbox(self, height=8)
-        self.logs_list.pack(fill="both", expand=True, padx=5, pady=5)
+        self.logs_list.pack(fill="both", expand=True, padx=5, pady=8)
 
     def refresh_foods(self):
         foods = self.food_repo.find_all()
         display = [f"{f['name']}|{f['food_id']}" for f in foods]
+        #display = [f"{f['name']}" for f in foods]
         self.food_cb["values"] = display
         if display:
             self.food_cb.current(0)
 
     def refresh_logs(self):
         self.logs_list.delete(0, tk.END)
-        rows = self.log_repo.find_by_user_and_date(self.user_id, self.date_var.get())
+        rows = self.foodlog_repo.find_by_user_and_date(self.user_id, self.date_var.get())
         for r in rows:
             name = r.get("name") or "?"
-            portion = r.get("portion_size_g") or 0
-            cal_per = r.get("calories_per_portion") or 0
-            total_cal = (portion / 100.0) * cal_per
+            portion = int(r.get("portion_size_g") or 100)
+            cal_per = int(r.get("kcal_per_portion") or 0)
+            total_cal = float((portion / 100.0) * cal_per)
             self.logs_list.insert(tk.END, f"{r['date']} - {name} {portion}g ({total_cal:.1f} kcal)")
 
     def _on_add(self):
@@ -204,57 +264,57 @@ class FoodLogFrame(tk.Frame):
             messagebox.showwarning("Invalid portion", "Portion must be numeric.")
             return
         date_str = self.date_var.get().strip()
-        self.log_repo.create_log(self.user_id, food_id, date_str, portion)
+        self.foodlog_repo.create_log(self.user_id, food_id, date_str, portion)
         messagebox.showinfo("Saved", "Food log saved.")
         self.refresh_logs()
 
-class AllLogsWindow(tk.Toplevel):
+class AllFoodLogsWindow(tk.Toplevel):
     """Window to view, edit, and delete all logs for the logged-in user."""
     def __init__(self, master, db_path: str, user_id: str):
         super().__init__(master)
         self.db_path = db_path
         self.user_id = user_id
         self.food_repo = FoodRepository(db_path)
-        self.log_repo = FoodLogRepository(db_path)
+        self.foodlog_repo = FoodLogRepository(db_path)
         self.title("All Food Logs")
-        self.geometry("700x400")
+        self.geometry("700x900")
         self._build()
-        self.refresh()
+        self.refresh_foods()  # Call refresh_foods instead of refresh
 
     def _build(self):
-        top = tk.Frame(self)
-        top.pack(fill="x", padx=5, pady=5)
-        tk.Label(top, text="All logs for user", font=("Arial", 14)).pack(side="left")
+        topframe = tk.Frame(self)
+        topframe.pack(fill="x", padx=5, pady=8)
+        tk.Label(topframe, text="All logs for user", font=("Arial", 18)).pack(side="left")
         self.search_var = tk.StringVar()
-        tk.Entry(top, textvariable=self.search_var, width=30).pack(side="right")
-        tk.Button(top, text="Refresh", command=self.refresh).pack(side="right", padx=5)
+        tk.Entry(topframe, textvariable=self.search_var, width=30).pack(side="right")
+        tk.Button(topframe, text="Refresh", command=self.refresh_foods, font=("Arial", 14)).pack(side="right", padx=5)
 
-        # Treeview with columns: date, food name, portion, calories
-        columns = ("date", "food", "portion", "calories", "log_id")
+        # Treeview with columns: date, food name, portion, kcal
+        columns = ("date", "food", "portion", "kcal", "log_id")
         self.tree = ttk.Treeview(self, columns=columns, show="headings", selectmode="browse")
         self.tree.heading("date", text="Date")
         self.tree.heading("food", text="Food")
         self.tree.heading("portion", text="Portion (g)")
-        self.tree.heading("calories", text="Calories")
+        self.tree.heading("kcal", text="Kcal")
         # log_id column hidden
         self.tree.column("log_id", width=0, stretch=False)
-        self.tree.pack(fill="both", expand=True, padx=5, pady=5)
+        self.tree.pack(fill="both", expand=True, padx=5, pady=8)
 
         btnframe = tk.Frame(self)
-        btnframe.pack(fill="x", pady=5)
-        tk.Button(btnframe, text="Edit selected", command=self._on_edit).pack(side="left", padx=5)
-        tk.Button(btnframe, text="Delete selected", command=self._on_delete).pack(side="left", padx=5)
-        tk.Button(btnframe, text="Close", command=self.destroy).pack(side="right", padx=5)
+        btnframe.pack(fill="x", pady=8)
+        tk.Button(btnframe, text="Edit selected", command=self._on_edit, font=("Arial", 14)).pack(side="left", padx=5)
+        tk.Button(btnframe, text="Delete selected", command=self._on_delete, font=("Arial", 14)).pack(side="left", padx=5)
+        tk.Button(btnframe, text="Close", command=self.destroy, font=("Arial", 14)).pack(side="right", padx=5)
 
-    def refresh(self):
+    def refresh_foods(self):
         for r in self.tree.get_children():
             self.tree.delete(r)
-        rows = self.log_repo.find_all_for_user(self.user_id)
+        rows = self.foodlog_repo.find_all_for_user(self.user_id)
         for r in rows:
-            cal_per = r.get("calories_per_portion") or 0.0
-            portion = r.get("portion") or 0.0
-            total_cal = (portion / 100.0) * cal_per
-            self.tree.insert("", "end", values=(r.get("date"), r.get("name"), f"{total_cal:.1f}", f"{total_cal:.1f}", r.get("log_id")))
+            cal_per = int(r.get("kcal_per_portion") or 0.0)
+            portion = int(r.get("portion_size_g") or 0.0)
+            total_cal = float((portion/100) * cal_per) # portion = 100 g
+            self.tree.insert("", "end", values=(r.get("date"), r.get("name"), f"{portion:.1f}", f"{total_cal:.1f}", r.get("log_id")))
 
     def _selected_log(self):
         sel = self.tree.selection()
@@ -262,12 +322,12 @@ class AllLogsWindow(tk.Toplevel):
             messagebox.showwarning("Select row", "Please select a log row first.")
             return None
         vals = self.tree.item(sel[0], "values")
-        # values: (date, food, portion, calories, log_id)
+        # values: (date, food, portion, kcal, log_id)
         return {
             "date": vals[0],
             "food": vals[1],
             "portion": vals[2],
-            "calories": vals[3],
+            "kcal": vals[3],
             "log_id": vals[4]
         }
 
@@ -276,7 +336,7 @@ class AllLogsWindow(tk.Toplevel):
         if not sel:
             return
         # Prompt for new portion and date
-        new_portion = simpledialog.askstring("Edit portion", f"Portion (g) for {sel['food']} on {sel['date']}:", initialvalue=sel["portion"], parent=self)
+        new_portion = simpledialog.askstring("Edit portion", f"Portion (100g) for {sel['food']} on {sel['date']}:", initialvalue=sel["portion"], parent=self)
         if new_portion is None:
             return
         try:
@@ -284,17 +344,17 @@ class AllLogsWindow(tk.Toplevel):
         except ValueError:
             messagebox.showwarning("Invalid", "Portion must be numeric.")
             return
-        new_date = simpledialog.askstring("Edit date", "Date (YYYY-MM-DD):", initialvalue=sel["date"], parent=self)
+        new_date = simpledialog.askstring("Edit date", "YYYY-MM-DD:", initialvalue=sel["date"], parent=self)
         if new_date is None:
             return
         # Update in DB
         try:
-            with self.log_repo._conn() as conn:
+            with self.foodlog_repo._conn() as conn:
                 cur = conn.cursor()
                 cur.execute("UPDATE foodlog SET portion_size_g = ?, date = ? WHERE log_id = ?", (new_portion_val, new_date, sel["log_id"]))
                 conn.commit()
             messagebox.showinfo("Updated", "Log updated.")
-            self.refresh()
+            self.refresh_foods()
         except Exception as e:
             messagebox.showerror("Error", f"Could not update log: {e}")
 
@@ -305,55 +365,78 @@ class AllLogsWindow(tk.Toplevel):
         if not messagebox.askyesno("Confirm", f"Delete log for {sel['food']} on {sel['date']}?"):
             return
         try:
-            with self.log_repo._conn() as conn:
+            with self.foodlog_repo._conn() as conn:
                 cur = conn.cursor()
                 cur.execute("DELETE FROM foodlog WHERE log_id = ?", (sel["log_id"],))
                 conn.commit()
             messagebox.showinfo("Deleted", "Log deleted.")
-            self.refresh()
+            self.refresh_foods()
         except Exception as e:
-            messagebox.showerror("Error", f"Could not delete log: {e}")
+            messagebox.showerror("Error", f"Could not delete log: {e}")   
+class Dashboard_food(tk.Toplevel):
+    def __init__(self, master, username: str, db_path: str, user_id: str):
+        super().__init__(master)
+        self.title(f"Welcome to Food Dashboard - {username}")
+        self.geometry("700x900")
+        self.username = username
+        self.user_id = user_id
+        self.db_path = db_path
+        
+        # Add header and button to view all logs with bigger fonts
+        header_frame = tk.Frame(self)
+        header_frame.pack(fill="x", padx=10, pady=10)
+        
+        tk.Label(header_frame, text=f"Food Dashboard - {username}", font=("Arial", 18)).pack(side="left")
+        tk.Button(header_frame, text="View All Food Logs", 
+                 command=self._open_all_logs_window, 
+                 font=("Arial", 16)).pack(side="right")
+        
+        # Food logging UI
+        fl = FoodLogFrame(self, db_path, user_id)
+        fl.pack(expand=True, fill="both")
+    
+    def _open_all_logs_window(self):
+        AllFoodLogsWindow(self, self.db_path, self.user_id)
 
-# Activity ----------------------
+# Activity ---------------------- Activity
 class ActivityLogFrame(tk.Frame):
     def __init__(self, master, db_path: str, user_id: str):
         super().__init__(master)
         self.db_path = db_path
         self.user_id = user_id
         self.activity_repo = ActivityRepository(db_path)
-        self.log_repo = ActivityLogRepository(db_path)
+        self.activitylog_repo = ActivityLogRepository(db_path)
         self._build()
         self.refresh_activities()
         self.refresh_logs()
 
     def _build(self):
         topframe = tk.Frame(self)
-        topframe.pack(fill="x", padx=5, pady=5)
+        topframe.pack(fill="x", padx=5, pady=8)
 
-        tk.Label(topframe, text="Add activity log").grid(row=0, column=0, columnspan=4)
-
-        tk.Label(topframe, text="Activity").grid(row=1, column=0, sticky="e")
-        tk.Label(topframe, text="Unit (steps)").grid(row=1, column=2, sticky="e")
-        tk.Label(topframe, text="Date (YYYY-MM-DD)").grid(row=2, column=1, sticky="e")
+        tk.Label(topframe, text="Activity").grid(row=0, column=0, sticky="w")
+        tk.Label(topframe, text="Act. Count").grid(row=1, column=0, sticky="w")
+        tk.Label(topframe, text="YYYY-MM-DD").grid(row=2, column=0, sticky="w")
 
         self.activity_var = tk.StringVar()
-        self.unit_var = tk.StringVar(value="100")
+        self.activity_count_var = tk.StringVar(value="100")
         self.date_var = tk.StringVar(value=date.today().isoformat())
 
-        self.activity_cb = ttk.Combobox(topframe, textvariable=self.activity_var, state="readonly", width=16)
-        self.activity_cb.grid(row=1, column=1, padx=5, pady=2)
-        tk.Entry(topframe, textvariable=self.unit_var, width=10).grid(row=1, column=3, padx=5)
-        tk.Entry(topframe, textvariable=self.date_var, width=15).grid(row=2, column=1, padx=5)
+        self.activity_cb = ttk.Combobox(topframe, textvariable=self.activity_var, state="readonly", width=20)
+        self.activity_cb.grid(row=0, column=1, padx=5, pady=8, sticky="e")
+        tk.Entry(topframe, textvariable=self.activity_count_var, width=10).grid(row=1, column=1, padx=5, pady=8, sticky="e")
+        tk.Entry(topframe, textvariable=self.date_var, width=15).grid(row=2, column=1, padx=5, pady=8, sticky="e")
 
-        tk.Button(topframe, text="Add Log", command=self._on_add).grid(row=3, column=0, columnspan=4, pady=8)
+        tk.Button(topframe, text="Add to activity Log", command=self._on_add).grid(row=3, column=0, columnspan=4, pady=8)
 
         # logs list
         self.logs_list = tk.Listbox(self, height=8)
-        self.logs_list.pack(fill="both", expand=True, padx=5, pady=5)
+        self.logs_list.pack(fill="both", expand=True, padx=5, pady=8)
 
     def refresh_activities(self):
         activities = self.activity_repo.find_all()
-        display = [f"{f['name']}|{f['activity_id']}" for f in activities]
+        display = [f"{a['name']}|{a['activity_id']}" for a in activities]
+        #display = [f"{a['name']}" for a in activities]
         self.activity_cb["values"] = display
         if display:
             self.activity_cb.current(0)
@@ -363,10 +446,10 @@ class ActivityLogFrame(tk.Frame):
         rows = self.activitylog_repo.find_by_user_and_date(self.user_id, self.date_var.get())
         for r in rows:
             name = r.get("name") or "?"
-            unit = r.get("units") or 0
-            cal_per = r.get("calories_per_unit") or 0
-            total_cal = (unit) * cal_per
-            self.logs_list.insert(tk.END, f"{r['date']} - {name} {unit}g ({total_cal:.1f} kcal)")
+            act_count = int(r.get("activity_count") or 0)
+            cal_per = int(r.get("kcal_per_unit") or 0)
+            total_cal = float(act_count * cal_per/1000) # cal_per in kcal
+            self.logs_list.insert(tk.END, f"{r['date']} - {name} {act_count} ({total_cal:.1f} kcal)")
 
     def _on_add(self):
         sel = self.activity_var.get()
@@ -380,62 +463,81 @@ class ActivityLogFrame(tk.Frame):
             messagebox.showerror("Error", "Invalid activity selection.")
             return
         try:
-            unit = float(self.unit_var.get())
+            activity_count = float(self.activity_count_var.get())
         except ValueError:
-            messagebox.showwarning("Invalid unit", "Unit must be integer.")
+            messagebox.showwarning("Invalid activity_count", "Activity_count must be integer.")
             return
+        
         date_str = self.date_var.get().strip()
-        self.activitylog_repo.create_log(self.user_id, activity_id, date_str, unit, activity_count)
+        activ_count = float(self.activity_count_var.get())
+        kcal_burned = (activ_count/1000) * self.activity_repo.find_by_id(activity_id).get("kcal_per_unit", 0)
+
+        self.activitylog_repo.create_log(self.user_id, activity_id, date_str, activ_count, kcal_burned)
         messagebox.showinfo("Saved", "Activity log saved.")
         self.refresh_logs()
         
-class AllLogsWindow(tk.Toplevel):
+class AllActivityLogsWindow(tk.Toplevel):
     """Window to view, edit, and delete all logs for the logged-in user."""
     def __init__(self, master, db_path: str, user_id: str):
         super().__init__(master)
         self.db_path = db_path
         self.user_id = user_id
         self.activity_repo = ActivityRepository(db_path)
-        self.log_repo = ActivityLogRepository(db_path)
+        self.activitylog_repo = ActivityLogRepository(db_path)
         self.title("All Activity Logs")
-        self.geometry("700x400")
+        self.geometry("700x900")
         self._build()
-        self.refresh()
+        self.refresh_activities()
 
     def _build(self):
-        top = tk.Frame(self)
-        top.pack(fill="x", padx=5, pady=5)
-        tk.Label(top, text="All logs for user", font=("Arial", 18)).pack(side="left")
+        # Create the top frame first
+        topframe = tk.Frame(self)
+        topframe.pack(fill="x", padx=5, pady=8)
+        
+        tk.Label(topframe, text="All Activity Logs", font=("Arial", 18)).pack(side="left")
         self.search_var = tk.StringVar()
-        tk.Entry(top, textvariable=self.search_var, width=30).pack(side="right")
-        tk.Button(top, text="Refresh", command=self.refresh).pack(side="right", padx=5)
-
-        # Treeview with columns: date, activity name, unit, calories_per_unit
-        columns = ("date", "activity", "unit", "calories_per_unit", "log_id")
+        tk.Entry(topframe, textvariable=self.search_var, width=30).pack(side="right")
+        tk.Button(topframe, text="Refresh", command=self.refresh_activities, font=("Arial", 14)).pack(side="right", padx=5)
+        
+        # Create treeview with columns
+        columns = ("date", "activity_id", "activity_count", "kcal_burned", "log_id")
         self.tree = ttk.Treeview(self, columns=columns, show="headings", selectmode="browse")
+        
+        # Set headings
         self.tree.heading("date", text="Date")
-        self.tree.heading("activity", text="Activity")
-        self.tree.heading("unit", text="Unit (steps)")
-        self.tree.heading("calories_per_unit", text="Calories per unit")
+        self.tree.heading("activity_id", text="Activity")
+        self.tree.heading("activity_count", text="Activity Count")
+        self.tree.heading("kcal_burned", text="Kcal burned")
+
+        # Set column properties, including text alignment
+        for col in columns:
+            if col != "log_id":
+                self.tree.column(col, anchor='w')
+
         # log_id column hidden
         self.tree.column("log_id", width=0, stretch=False)
-        self.tree.pack(fill="both", expand=True, padx=5, pady=5)
+        self.tree.pack(fill="both", expand=True, padx=5, pady=8)
 
+        # Button frame
         btnframe = tk.Frame(self)
-        btnframe.pack(fill="x", pady=5)
-        tk.Button(btnframe, text="Edit selected", command=self._on_edit).pack(side="left", padx=5)
-        tk.Button(btnframe, text="Delete selected", command=self._on_delete).pack(side="left", padx=5)
-        tk.Button(btnframe, text="Close", command=self.destroy).pack(side="right", padx=5)
+        btnframe.pack(fill="x", pady=8)
 
-    def refresh(self):
+        tk.Button(btnframe, text="Edit selected", command=self._on_edit, font=("Arial", 14)).pack(side="left", padx=5)
+        tk.Button(btnframe, text="Delete selected", command=self._on_delete, font=("Arial", 14)).pack(side="left", padx=5)
+        tk.Button(btnframe, text="Close", command=self.destroy, font=("Arial", 14)).pack(side="right", padx=5)
+
+    def refresh_activities(self):  
+        # Clear existing rows
         for r in self.tree.get_children():
             self.tree.delete(r)
-        rows = self.log_repo.find_all_for_user(self.user_id)
+        
+        # Fetch and populate new data
+        rows = self.activitylog_repo.find_all_for_user(self.user_id)
         for r in rows:
-            cal_per = r.get("calories_burned_per_unit") or 0.0
-            unit = r.get("unit") or 0.0
-            total_cal = (unit) * cal_per
-            self.tree.insert("", "end", values=(r.get("date"), r.get("name"), f"{unit}", f"{total_cal:.1f}", r.get("log_id")))
+            cal_per = float(r.get("kcal_burned") or 0.0)
+            activi_count = int(r.get("activity_count") or 0.0)
+            total_cal = float(activi_count * cal_per)
+            self.tree.insert("", "end", values=(r.get("date"), r.get("name"), f"{activi_count}", f"{total_cal:.1f}", r.get("log_id")))
 
     def _selected_log(self):
         sel = self.tree.selection()
@@ -443,12 +545,12 @@ class AllLogsWindow(tk.Toplevel):
             messagebox.showwarning("Select row", "Please select a log row first.")
             return None
         vals = self.tree.item(sel[0], "values")
-        # values: (date, activity, unit, calories_burned, log_id)
+        # values: (date, activity, activity_count, kcal_burned, log_id)
         return {
             "date": vals[0],
             "activity": vals[1],
-            "unit": vals[2],
-            "calories_burned": vals[3],
+            "activi_count": vals[2],
+            "total_cal": vals[3],
             "log_id": vals[4]
         }
 
@@ -456,26 +558,26 @@ class AllLogsWindow(tk.Toplevel):
         sel = self._selected_log()
         if not sel:
             return
-        # Prompt for new unit and date
-        new_unit = simpledialog.askstring("Edit unit", f"Unit for {sel['activity']} on {sel['date']}:", initialvalue=sel["unit"], parent=self)
-        if new_unit is None:
+        # Prompt for new activity_count and date
+        new_activity_count = simpledialog.askstring("Edit activity count", f"Activity Count for {sel['activity']} on {sel['date']}:", initialvalue=sel["activi_count"], parent=self)
+        if new_activity_count is None:
             return
         try:
-            new_unit_val = float(new_unit)
+            new_activity_count_val = int(new_activity_count)
         except ValueError:
-            messagebox.showwarning("Invalid", "Unit must be integer.")
+            messagebox.showwarning("Invalid", "Activity Count must be integer.")
             return
-        new_date = simpledialog.askstring("Edit date", "Date (YYYY-MM-DD):", initialvalue=sel["date"], parent=self)
+        new_date = simpledialog.askstring("Edit date", "YYYY-MM-DD:", initialvalue=sel["date"], parent=self)
         if new_date is None:
             return
         # Update in DB
         try:
-            with self.log_repo._conn() as conn:
+            with self.activitylog_repo._conn() as conn:
                 cur = conn.cursor()
-                cur.execute("UPDATE activitylog SET unit_size = ?, date = ? WHERE log_id = ?", (new_unit_val, new_date, sel["log_id"]))
+                cur.execute("UPDATE activitylog SET activity_count = ?, date = ? WHERE log_id = ?", (new_activity_count_val, new_date, sel["log_id"]))
                 conn.commit()
             messagebox.showinfo("Updated", "Log updated.")
-            self.refresh()
+            self.refresh_activities()
         except Exception as e:
             messagebox.showerror("Error", f"Could not update log: {e}")
 
@@ -486,42 +588,45 @@ class AllLogsWindow(tk.Toplevel):
         if not messagebox.askyesno("Confirm", f"Delete log for {sel['activity']} on {sel['date']}?"):
             return
         try:
-            with self.log_repo._conn() as conn:
+            with self.activitylog_repo._conn() as conn:
                 cur = conn.cursor()
                 cur.execute("DELETE FROM activitylog WHERE log_id = ?", (sel["log_id"],))
                 conn.commit()
             messagebox.showinfo("Deleted", "Log deleted.")
-            self.refresh()
+            self.refresh_activities()
         except Exception as e:
             messagebox.showerror("Error", f"Could not delete log: {e}")
-
-class Dashboard_food(tk.Frame):
-    def __init__(self, master, username: str, db_path: str, user_id: str):
-        super().__init__(master)
-        self.username = username
-        self.user_id = user_id
-        tk.Label(self, text=f"Welcome, {username}", font=("Arial", 18)).pack(pady=10)
-        # Food logging UI
-        fl = FoodLogFrame(self, db_path, user_id)
-        fl.pack(expand=True, fill="both")
-        tk.Button(self, text="View All Logs", command=lambda: AllLogsWindow(self, db_path, user_id)).pack(pady=5)
         
-class Dashboard_activity(tk.Frame):
+class Dashboard_activity(tk.Toplevel):
     def __init__(self, master, username: str, db_path: str, user_id: str):
         super().__init__(master)
+        self.title(f"Welcome to Activity Dashboard - {username}")
+        self.geometry("700x900")
         self.username = username
         self.user_id = user_id
-        tk.Label(self, text=f"Welcome, {username}", font=("Arial", 18)).pack(pady=10)
+        self.db_path = db_path
+        
+        # Add header and button to view all logs with bigger fonts
+        header_frame = tk.Frame(self)
+        header_frame.pack(fill="x", padx=10, pady=10)
+        
+        tk.Label(header_frame, text=f"Activity Dashboard - {username}", font=("Arial", 18)).pack(side="left")
+        tk.Button(header_frame, text="View All Activity Logs", 
+                 command=self._open_all_logs_window, 
+                 font=("Arial", 16)).pack(side="right")
+
         # Activity logging UI
-        fl = ActivityLogFrame(self, db_path, user_id)
-        fl.pack(expand=True, fill="both")
-        tk.Button(self, text="View All Logs", command=lambda: AllLogsWindow(self, db_path, user_id)).pack(pady=5)
+        al = ActivityLogFrame(self, db_path, user_id)
+        al.pack(expand=True, fill="both")
+    
+    def _open_all_logs_window(self):
+        AllActivityLogsWindow(self, self.db_path, self.user_id)
 
 class App(tk.Tk):
     def __init__(self, db_path):
         super().__init__()
         self.title("Laihdutanyt - v1")
-        self.geometry("800x600")
+        self.geometry("450x300")
         self.db_path = db_path
         self.user_repo = UserRepository(db_path)
         self.food_repo = FoodRepository(db_path)
@@ -564,25 +669,6 @@ class App(tk.Tk):
         except Exception as e:
             messagebox.showerror("Import error", f"Import failed: {e}")
 
-
-    def _on_package_project(self):
-        try:
-            # call packaging script
-            pkg_script = os.path.join(os.path.dirname(__file__), "scripts", "package_project.sh")
-            if not os.path.exists(pkg_script):
-                messagebox.showwarning("Not found", "Packaging script not found.")
-                return
-            # ask for output dir
-            outdir = filedialog.askdirectory(title="Select output folder for package")
-            if not outdir:
-                return
-            # run packaging script
-            import subprocess
-            subprocess.check_call([pkg_script, outdir])
-            messagebox.showinfo("Packaged", f"Project packaged to {outdir}")
-        except Exception as e:
-            messagebox.showerror("Package error", f"Packaging failed: {e}")
-
     def _build_login(self):
         self.login_frame = LoginFrame(self, self.user_repo, self._on_login_success)
         self.login_frame.pack(expand=True, fill="both")
@@ -593,11 +679,32 @@ class App(tk.Tk):
         if not user:
             messagebox.showerror("Error", "User record not found after login.")
             return
+        # Store user information for dashboard use
+        self.current_username = username
+        self.current_user_id = user.user_id  # or user['user_id'] depending on your user object structure
         self.login_frame.pack_forget()
-        self.dashboard_food = Dashboard_food(self, username, self.db_path, user.user_id)
-        self.dashboard_food.pack(expand=True, fill="both")
-        self.dashboard_activity = Dashboard_activity(self, username, self.db_path, user.user_id)
-        self.dashboard_activity.pack(expand=True, fill="both")
+        self._build_dashboard()
+        
+    def _build_dashboard(self):
+        self.switch = 0  # Initialize switch variable
+        # Add title label with bigger font
+        tk.Label(self, text=f"Welcome, {self.current_username}!", font=("Arial", 18)).pack(pady=20)
+        
+        # Button to view food logs with bigger font
+        tk.Button(self, text="View Food Logs",
+                  command=lambda: self.button_pressed(1), font=("Arial", 16)).pack(pady=10)
+        # Button to view activity logs with bigger font  
+        tk.Button(self, text="View Activity Logs",
+                  command=lambda: self.button_pressed(2), font=("Arial", 16)).pack(pady=10)
+
+    def button_pressed(self, button_id):
+        self.switch = button_id  # Update the switch variable
+        print(f"Button {self.switch} pressed")
+        # Call the corresponding window methods
+        if self.switch == 1:
+            Dashboard_food(self, self.current_username, self.db_path, self.current_user_id)
+        elif self.switch == 2:
+            Dashboard_activity(self, self.current_username, self.db_path, self.current_user_id)
 
 def main():
     if not os.path.exists(DB_PATH):
@@ -609,4 +716,4 @@ def main():
 if __name__ == "__main__":
     main()
 	
-# modifioitu generoitu koodi päättyy
+# Refactoroitu, alussa generoitu koodi päättyy

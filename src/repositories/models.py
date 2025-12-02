@@ -1,4 +1,4 @@
-# Generoitu koodi alkaa
+# Refactoroituaiemmin generoitu koodi alkaa
 # models.py
 # Dataluokat sovellusolioille
 
@@ -15,10 +15,10 @@ class User:
     weight: Optional[float] = None
     length: Optional[float] = None
     age: Optional[int] = None
-    activity_level: Optional[str] = None
+    activity_level: Optional[int] = None
     allergies: Optional[str] = None
-    calorie_min: Optional[float] = None
-    calorie_max: Optional[float] = None
+    kcal_min: Optional[float] = None
+    kcal_max: Optional[float] = None
     weight_loss_target: Optional[float] = None
 
 
@@ -26,13 +26,13 @@ class User:
 class Food:
     food_id: str
     name: str
-    calories_per_portion: float
+    kcal_per_portion: float
     carbs_per_portion: float
     protein_per_portion: float
     fat_per_portion: float
 
 
-# Generoitu koodi päättyy
+# Refactoroitu, aiemmin generoitu koodi päättyy
 
 
 @dataclass
@@ -48,8 +48,8 @@ class Foodlog:
 class Activity:
     activity_id: str
     name: str
-    unit: str
-    calories_per_unit: float
+    unit: int
+    kcal_per_unit: float
 
 
 @dataclass
@@ -58,14 +58,14 @@ class Activitylog:
     user_id: str
     activity_id: str
     date: str
-    activity_count: float
-    calories_burned: float
+    activity_count: int
+    kcal_burned: float
 
 
 @dataclass
 class Statistics:
     user_id: str
     date: str
-    total_calories_consumed: float
+    total_kcal_consumed: float
     total_weight: float
     weight_change: float

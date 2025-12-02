@@ -15,3 +15,12 @@ Other:
 
 Week 4: Added activity and activitylog sql-tabless and model classes plus their processing in Laihdutanyt_v1.
 Added import activities-script, created new laihdutanyt.db in data-folder.
+
+Week 5: All UI functions and mental model refactored
+- UI, Logic and Database tested together    
+- Components implemented and tested: 
+  - User Registration and Log-in
+  - Main button-menu
+  - Food and Activity Dashboards with data-entry logging
+  - Food and Activity Loggings viewing windows with Edit/Delete/Close functionality
+  - Usability testing of implemented parts

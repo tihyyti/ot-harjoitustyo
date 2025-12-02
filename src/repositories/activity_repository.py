@@ -42,16 +42,16 @@ class ActivityRepository:
             row = cur.fetchone()
             return dict(row) if row else None
 
-    def create(self, name: str, unit: str, calories_per_unit: float = 0.0) -> Dict:
+    def create(self, name: str, unit: str, kcal_per_unit: float = 0.0) -> Dict:
         activity_id = str(uuid.uuid4())
         with self._conn() as conn:
             cur = conn.cursor()
             cur.execute(
                 """
-                INSERT INTO Activity (activity_id, name, unit, calories_per_unit)
+                INSERT INTO Activity (activity_id, name, unit, kcal_per_unit)
                 VALUES (?, ?, ?,?)
             """,
-                (activity_id, name, unit, calories_per_unit),
+                (activity_id, name, unit, kcal_per_unit),
             )
             conn.commit()
         return self.find_by_id(activity_id)
