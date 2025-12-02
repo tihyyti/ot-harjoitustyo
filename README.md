@@ -3,16 +3,9 @@
 
 # Ohjelmistotekniikka, harjoitustyö
 
-## Linkit
-
-Dokumentaatio viikko3:
-
-[changelog](https://github.com/tihyyti/ot-harjoitustyo/blob/master/dokumentaatio/changelog.md)
-[laihdutanyt_requirements_specification_v2](https://github.com/tihyyti/ot-harjoitustyo/tree/master/dokumentaatio/laihdutanyt_requirements_specification_v2.md)
-
 ## Systeemikuvaukset:
 
-**Laihdutanyt — Requirements Specification (v1)**
+**Laihdutanyt — Requirements Specification (v2)**
 
 **Application Name:** laihdutanyt.
 
@@ -20,14 +13,14 @@ Dokumentaatio viikko3:
 UI is implemented by Tkinter/Python and database is SQLite. Application type is Desktop — no WEB UI is allowed.
 
 **Functional overview:**  
-The application requires a description and definition of a weekly weight loss program at a monthly level. The daily amount of calories from food and drink is recorded per meal and it is estimated based on the ingredients contained in the meals. Snacks in particular are recorded in the memory for the purpose of making a change! Calorie consumption is estimated using e.g. some existing mobile phone and/or a wristwatch application that measures exercises (there are many of those on the market). The program compiles statistics and prints recommendations to enhance weight management, however, without sacrificing well-being.
+The application requires a description and definition of a weekly weight loss program at a monthly level. The daily amount of calories from food and drink is recorded per portion and it is estimated based on the ingredients contained. Snacks in particular are recorded in the memory for the purpose of making a change! Calorie consumption is estimated using e.g. some existing mobile phone and/or a wristwatch application that measures exercises (there are many of those on the market). The program compiles and displays statistics to enhance weight management, however, without sacrificing well-being.
 
 The core functionality of the application can be also used to track the user's behavioral preferences to be able it to identify and prompt the user to give up some harmful habits, such as e.g. excessive snacking and evening eating. This extension however will be implemented only if there is enough excessive time for it.
 
 **Functional Requirements Specification for Diet Program Application**
 
 **1. Introduction**  
-This document outlines the functional requirements for a diet program application designed for both users and administrators. The application will track calorie intake, consumption, weight loss, and user dietary preferences.
+This document outlines the functional requirements for a diet program application designed for both users and administrators. The application will track calorie intake, consumption, weight loss, and user dietary constraints.
 
 **2. User Stories**
 
@@ -35,12 +28,12 @@ This document outlines the functional requirements for a diet program applicatio
 - As a user, I want to log my daily food intake, so that I can track my calorie consumption.  
 - As a user, I want to see my daily, weekly, and monthly calorie consumption and nutrient intake statistics to evaluate my dietary habits.  
 - As a user, I want to set my calorie goals (minimum and maximum) to align my diet with my weight loss goals.  
-- As a user, I want to record my allergies and dietary restrictions (e.g., lactose intolerance), enabling personalized recommendations.  
+- As a user, I want to record my allergies and dietary restrictions (e.g., lactose intolerance), enabling a personalized diet.  
 - As a user, I want to achieve weekly and monthly weight loss targets to see my rewarding progress.
 
 **2.2 User Stories for administrators:**  
 - As an admin, I want to manage user accounts, allowing me to add, deactivate, or modify user information.  
-- As an admin, I want to manage dietary programs, including creating, editing, and deleting guidelines regarding minimum and maximum calorie intakes.  
+- As an admin, I want to manage dietary constraints, including creating, editing, and deleting guidelines regarding minimum and maximum calorie intakes.  
 - As an admin, I want to generate reports that summarize user statistics and progress toward their weight loss goals.
 
 **3. Functional Requirements**
@@ -51,7 +44,7 @@ This document outlines the functional requirements for a diet program applicatio
 Users should register and log in to access their profiles.
 
 **Profile Management:**  
-Users can update personal information, including weight, height, age, and activity level.
+Users can update personal information, including weight, length, age, activity level, allergies, kcal_min, kcal_max, weight_loss_target.
 
 **3.2 Diet Tracking**  
 
@@ -73,7 +66,7 @@ Each food item must have the following attributes:
 - Name
 - Date, 
 - Activity_count (as steps), 
-- Activity_level (calories consumed)
+- Calories_burned (kilo-calories consumed)
 
 **3.4 Nutrient Tracking and Analysis**
 
@@ -108,12 +101,17 @@ The application should make food recommendations based on these preferences.
 
 **5. User Interface (Tkinter)**
 
-**Login Screen:** For user registration and authentication.  
-**Dashboard:** Displaying total calories consumed, nutrient stats, and progress towards weight loss goals.  
-**Food Logging Interface:** Functions to add consumed food items and view their nutrient details.  
-**Activity Logging Interface:** Functions to add activity-items and view their energy-consumption details.   
+Done and tested:
+**Login Window:** For user registration and authentication.  
+**Welcome Button-menu:** Dashboard Selection Buttons-menu.  
+**Food Logging Dashboard:** Functions to add consumed food items and view their nutrient details.  
+**Activity Logging Dashboard:** Functions to add activity-items and view their energy-consumption details. 
+**View All Food Logs :** Functions to list and edit consumed food items and view their calories.  
+**View All Activity Logs:**  Functions to list and edit activities logged and view their calories burned.
+
+Pending:
 **Statistics Screen:** Charts for weekly and monthly views of food-intake, activity and weight progress.  
-**Admin Dashboard:** For managing user accounts, dietary programs, and generating reports.
+**Admin Dashboard:** For managing user accounts, dietary constraints, and generating reports.
 
 **6. Constraints**
 
