@@ -1,6 +1,6 @@
 # Laihdutanyt Application - Technical Architecture
 
-## 📐 Architecture Overview
+##  Architecture Overview
 
 The Laihdutanyt application follows a **layered architecture** pattern with clear separation of concerns:
 
@@ -40,7 +40,7 @@ The Laihdutanyt application follows a **layered architecture** pattern with clea
 └─────────────────────────────────────────────────┘
 ```
 
-## 🗂️ Project Structure
+##  Project Structure
 
 ```
 ot-harjoitustyo/
@@ -101,7 +101,7 @@ ot-harjoitustyo/
     └── ...
 ```
 
-## 🎯 Layer Responsibilities
+##  Layer Responsibilities
 
 ### 1. Presentation Layer (UI)
 
@@ -115,10 +115,10 @@ ot-harjoitustyo/
 - Window management (positioning, sizing, hide/show)
 
 **Key Principles**:
-- ✅ NO business logic
-- ✅ NO direct database access
-- ✅ Calls service layer for data operations
-- ✅ Displays data provided by services
+-  NO business logic
+-  NO direct database access
+-  Calls service layer for data operations
+-  Displays data provided by services
 
 **Example**:
 ```python
@@ -146,10 +146,10 @@ def _on_login(self):
 - Handle complex operations (aggregations, calculations)
 
 **Key Principles**:
-- ✅ NO UI code (no tkinter imports)
-- ✅ Uses repositories for data access
-- ✅ Returns clean data structures (dicts, lists)
-- ✅ Raises exceptions for errors
+-  NO UI code (no tkinter imports)
+-  Uses repositories for data access
+-  Returns clean data structures (dicts, lists)
+-  Raises exceptions for errors
 
 **Example Services**:
 - `UserService`: Authentication, registration, user profile management
@@ -169,10 +169,10 @@ def _on_login(self):
 - Return dataclass instances or dictionaries
 
 **Key Principles**:
-- ✅ NO business logic
-- ✅ NO UI code
-- ✅ One repository per entity
-- ✅ Returns data models or dicts
+-  NO business logic
+-  NO UI code
+-  One repository per entity
+-  Returns data models or dicts
 
 ### 4. Data Layer (Database)
 
@@ -190,7 +190,7 @@ def _on_login(self):
 - `recommendation`: Admin recommendations
 - `user_constraint`: User health constraints
 
-## 📊 Component Diagram (Mermaid)
+##  Component Diagram (Mermaid)
 
 ```mermaid
 graph TB
@@ -278,7 +278,7 @@ graph TB
     style DB fill:#f44336
 ```
 
-## 🔄 Data Flow Example: User Logs Food
+##  Data Flow Example: User Logs Food
 
 ```mermaid
 sequenceDiagram
@@ -303,7 +303,7 @@ sequenceDiagram
     FoodView->>User: Show "Food logged!" message
 ```
 
-## 🏗️ Class Diagram (Simplified)
+##  Class Diagram (Simplified)
 
 ```mermaid
 classDiagram
@@ -381,7 +381,7 @@ classDiagram
     AdminService --> UserRepository
 ```
 
-## 🎨 Design Patterns Used
+##  Design Patterns Used
 
 ### 1. **Layered Architecture**
 - Clear separation between UI, business logic, and data access
@@ -411,63 +411,63 @@ classDiagram
 ## 🔧 Benefits of This Architecture
 
 ### Maintainability
-- ✅ Each module has single responsibility
-- ✅ Easy to locate code (login logic → login_view.py)
-- ✅ Changes are isolated
+-  Each module has single responsibility
+-  Easy to locate code (login logic → login_view.py)
+-  Changes are isolated
 
 ### Testability
-- ✅ Business logic separated from UI
-- ✅ Services can be tested without UI
-- ✅ Repositories can use test database
+-  Business logic separated from UI
+-  Services can be tested without UI
+-  Repositories can use test database
 
 ### Scalability
-- ✅ Easy to add new features (new service/view)
-- ✅ Can replace UI framework (tkinter → Qt/web)
-- ✅ Can replace database (SQLite → PostgreSQL)
+-  Easy to add new features (new service/view)
+-  Can replace UI framework (tkinter → Qt/web)
+-  Can replace database (SQLite → PostgreSQL)
 
 ### Collaboration
-- ✅ Multiple developers can work on different layers
-- ✅ Clear interfaces between components
-- ✅ Less merge conflicts
+-  Multiple developers can work on different layers
+-  Clear interfaces between components
+-  Less merge conflicts
 
 ### Reusability
-- ✅ Services can be used by different UIs (desktop, web, mobile)
-- ✅ Repositories abstract database details
-- ✅ UI components can be reused
+-  Services can be used by different UIs (desktop, web, mobile)
+-  Repositories abstract database details
+-  UI components can be reused
 
-## 🚀 Migration Plan
+##  Migration Plan
 
 ### Phase 1: Service Layer (Current)
-✅ Create service classes
-✅ Move business logic from UI to services
-✅ Services use existing repositories
+ Create service classes
+ Move business logic from UI to services
+ Services use existing repositories
 
 ### Phase 2: UI Refactoring (Next)
-⏳ Extract views from monolithic file
-⏳ Create separate view modules
-⏳ Update views to use services
+ Extract views from monolithic file
+ Create separate view modules
+ Update views to use services
 
 ### Phase 3: Component Extraction (Future)
-⏳ Extract reusable UI components
-⏳ Create component library
-⏳ Standardize UI patterns
+ Extract reusable UI components
+ Create component library
+ Standardize UI patterns
 
 ### Phase 4: Testing (Future)
-⏳ Unit tests for services
-⏳ Integration tests for repositories
-⏳ UI tests for views
+ Unit tests for services
+ Integration tests for repositories
+ UI tests for views
 
-## 📝 Coding Guidelines
+##  Coding Guidelines
 
 ### Service Layer
 ```python
-# ✅ Good: Clean service method
+#  Good: Clean service method
 def log_food(self, user_id: str, food_selection: str, portion_g: float, date_str: str):
     food_id = self._parse_food_id(food_selection)
     self._validate_portion(portion_g)
     return self.foodlog_repo.create_log(user_id, food_id, date_str, portion_g)
 
-# ❌ Bad: Service with UI code
+#  Bad: Service with UI code
 def log_food(self):
     food = self.food_dropdown.get()  # UI dependency!
     messagebox.showinfo("Success", "Logged!")  # UI code!
@@ -475,7 +475,7 @@ def log_food(self):
 
 ### UI Layer
 ```python
-# ✅ Good: UI delegates to service
+#  Good: UI delegates to service
 def _on_log_food(self):
     try:
         self.food_service.log_food(self.user_id, selection, portion, date)
@@ -484,7 +484,7 @@ def _on_log_food(self):
     except ValueError as e:
         messagebox.showerror("Error", str(e))
 
-# ❌ Bad: UI contains business logic
+#  Bad: UI contains business logic
 def _on_log_food(self):
     food_id = self.selection.split("|")[1]  # Business logic!
     if portion <= 0:  # Validation logic!
@@ -496,7 +496,7 @@ def _on_log_food(self):
 
 ### Repository Layer
 ```python
-# ✅ Good: Clean data access
+#  Good: Clean data access
 def find_by_username(self, username: str) -> Optional[User]:
     with self._conn() as conn:
         cur = conn.cursor()
@@ -504,14 +504,14 @@ def find_by_username(self, username: str) -> Optional[User]:
         row = cur.fetchone()
         return self._row_to_user(row) if row else None
 
-# ❌ Bad: Repository with business logic
+#  Bad: Repository with business logic
 def find_and_validate_user(self, username: str, password: str):  # Too much logic!
     user = self.find_by_username(username)
     if user and self._check_password(password):  # Validation logic!
         return user
 ```
 
-## 📚 References
+##  References
 
 - [Martin Fowler - Service Layer](https://martinfowler.com/eaaCatalog/serviceLayer.html)
 - [Repository Pattern](https://martinfowler.com/eaaCatalog/repository.html)
@@ -521,4 +521,4 @@ def find_and_validate_user(self, username: str, password: str):  # Too much logi
 
 **Document Version**: 1.0  
 **Last Updated**: December 9, 2025  
-**Author**: Development Team
+**Author**: In co-operation with Claude 4.5 AI
