@@ -1,0 +1,28 @@
+%% Sequence Diagram - User Logs Food
+%% Shows data flow through all layers
+
+sequenceDiagram
+    participant U as User
+    participant FV as FoodView<br/>(UI Layer)
+    participant FS as FoodService<br/>(Business Logic)
+    participant FR as FoodRepository<br/>(Data Access)
+    participant FLR as FoodLogRepository<br/>(Data Access)
+    participant DB as SQLite Database
+    
+    U->>FV: 1. Enters food selection<br/>& portion size
+    FV->>FV: 2. Validates input<br/>(not empty, positive)
+    FV->>FS: 3. log_food(user_id, food_selection,<br/>portion_g, date_str)
+    FS->>FS: 4. Parses food_id from selection<br/>(format: "name|id")
+    FS->>FS: 5. Business validation<br/>(portion > 0)
+    FS->>FLR: 6. create_log(user_id, food_id,<br/>date_str, portion_g)
+    FLR->>DB: 7. INSERT INTO foodlog
+    DB-->>FLR: 8. New log entry created
+    FLR-->>FS: 9. Returns FoodLog object
+    FS-->>FV: 10. Returns success
+    FV->>FV: 11. Refreshes daily list
+    FV->>FS: 12. get_daily_food_totals(user_id)
+    FS->>DB: 13. SQL: Aggregate logs<br/>by date with SUM
+    DB-->>FS: 14. Returns aggregated data
+    FS->>FS: 15. Date categorization<br/>(past/today/future)
+    FS-->>FV: 16. Returns formatted list<br/>with categories
+    FV->>U: 17. Displays updated<br/>food log list

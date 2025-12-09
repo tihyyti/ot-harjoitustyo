@@ -1,0 +1,152 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram name="Page-1" id="JMFZem5oEDlJxGSjJiex">
+    <mxGraphModel dx="1460" dy="942" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="IPstrcUqQGhYEqE02j-k-1" value="User" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="150" height="1404" as="geometry" />
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-2" value="FoodView&#xa;(UI Layer)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="1">
+          <mxGeometry x="254" y="20" width="150" height="1404" as="geometry" />
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-3" value="FoodService&#xa;(Business Logic)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="1">
+          <mxGeometry x="571" y="20" width="150" height="1404" as="geometry" />
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-4" value="FoodRepository&#xa;(Data Access)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="1">
+          <mxGeometry x="771" y="20" width="150" height="1404" as="geometry" />
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-5" value="FoodLogRepository&#xa;(Data Access)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="1">
+          <mxGeometry x="971" y="20" width="158" height="1404" as="geometry" />
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-6" value="SQLite Database" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="1">
+          <mxGeometry x="1218" y="20" width="150" height="1404" as="geometry" />
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-7" value="1. Enters food selection&#xa;&amp; portion size" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-1" target="IPstrcUqQGhYEqE02j-k-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="221" y="148" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-8" value="2. Validates input&#xa;(not empty, positive)" style="curved=1;endArrow=block;rounded=0;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-2" target="IPstrcUqQGhYEqE02j-k-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="221" />
+              <mxPoint x="380" y="251" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-9" value="3. log_food(user_id, food_selection,&#xa;portion_g, date_str)" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-2" target="IPstrcUqQGhYEqE02j-k-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="496" y="324" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-10" value="4. Parses food_id from selection&#xa;(format: &quot;name|id&quot;)" style="curved=1;endArrow=block;rounded=0;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-3" target="IPstrcUqQGhYEqE02j-k-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="697" y="397" />
+              <mxPoint x="697" y="427" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-11" value="5. Business validation&#xa;(portion &gt; 0)" style="curved=1;endArrow=block;rounded=0;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-3" target="IPstrcUqQGhYEqE02j-k-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="697" y="500" />
+              <mxPoint x="697" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-12" value="6. create_log(user_id, food_id,&#xa;date_str, portion_g)" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-3" target="IPstrcUqQGhYEqE02j-k-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="857" y="603" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-13" value="7. INSERT INTO foodlog" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-5" target="IPstrcUqQGhYEqE02j-k-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1180" y="655" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-14" value="8. New log entry created" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-6" target="IPstrcUqQGhYEqE02j-k-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1183" y="707" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-15" value="9. Returns FoodLog object" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-5" target="IPstrcUqQGhYEqE02j-k-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="759" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-16" value="10. Returns success" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-3" target="IPstrcUqQGhYEqE02j-k-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="499" y="811" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-17" value="11. Refreshes daily list" style="curved=1;endArrow=block;rounded=0;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-2" target="IPstrcUqQGhYEqE02j-k-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="863" />
+              <mxPoint x="380" y="893" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-18" value="12. get_daily_food_totals(user_id)" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-2" target="IPstrcUqQGhYEqE02j-k-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="496" y="945" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-19" value="13. SQL: Aggregate logs&#xa;by date with SUM" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-3" target="IPstrcUqQGhYEqE02j-k-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="978" y="1018" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-20" value="14. Returns aggregated data" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-6" target="IPstrcUqQGhYEqE02j-k-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="981" y="1070" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-21" value="15. Date categorization&#xa;(past/today/future)" style="curved=1;endArrow=block;rounded=0;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-3" target="IPstrcUqQGhYEqE02j-k-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="697" y="1143" />
+              <mxPoint x="697" y="1173" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-22" value="16. Returns formatted list&#xa;with categories" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-3" target="IPstrcUqQGhYEqE02j-k-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="499" y="1246" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IPstrcUqQGhYEqE02j-k-23" value="17. Displays updated&#xa;food log list" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="1" source="IPstrcUqQGhYEqE02j-k-2" target="IPstrcUqQGhYEqE02j-k-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="224" y="1319" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

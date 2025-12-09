@@ -1,0 +1,188 @@
+%% Class Diagram - Layered Architecture Relationships
+%% Shows relationships between application layers
+
+classDiagram
+    %% ========== PRESENTATION LAYER ==========
+    class LaihdutanytApp {
+        +String db_path
+        +UserService user_service
+        +FoodService food_service
+        +ActivityService activity_service
+        +AdminService admin_service
+        +String current_username
+        +int current_user_id
+        +_build_user_dashboard()
+        +_build_admin_dashboard()
+        +_on_user_login_success()
+        +_on_admin_login_success()
+    }
+    
+    class LoginView {
+        +UserService user_service
+        +AdminService admin_service
+        +_on_user_login()
+        +_on_admin_login()
+        +_on_open_register()
+    }
+    
+    class FoodView {
+        +FoodService food_service
+        +int user_id
+        +_on_log_food()
+        +_refresh_daily_list()
+    }
+    
+    class ActivityView {
+        +ActivityService activity_service
+        +int user_id
+        +_on_log_activity()
+        +_refresh_daily_list()
+    }
+    
+    class AdminView {
+        +AdminService admin_service
+        +UserService user_service
+        +_create_recommendation()
+        +_add_user_constraint()
+        +_refresh_user_list()
+    }
+    
+    %% ========== BUSINESS LOGIC LAYER ==========
+    class UserService {
+        +String db_path
+        +UserRepository user_repo
+        +authenticate_user(username, password) bool
+        +register_user(username, password, **kwargs) User
+        +get_user(username) User
+        +get_user_summary(username) dict
+        +get_all_users() List~User~
+    }
+    
+    class FoodService {
+        +String db_path
+        +FoodRepository food_repo
+        +FoodLogRepository foodlog_repo
+        +get_all_foods() List~dict~
+        +log_food(user_id, food_selection, portion_g, date_str)
+        +get_daily_food_totals(user_id) List~dict~
+        +update_food_log(log_id, portion_g, date_str)
+        +delete_food_log(log_id)
+    }
+    
+    class ActivityService {
+        +String db_path
+        +ActivityRepository activity_repo
+        +ActivityLogRepository activitylog_repo
+        +get_all_activities() List~dict~
+        +log_activity(user_id, selection, count, date_str)
+        +get_daily_activity_totals(user_id) List~dict~
+        +update_activity_log(log_id, count, date_str)
+        +delete_activity_log(log_id)
+    }
+    
+    class AdminService {
+        +String db_path
+        +AdminRepository admin_repo
+        +UserRepository user_repo
+        +authenticate_admin(username, password) bool
+        +get_all_users_summary() List~tuple~
+        +create_recommendation(username, admin, type, title, ...)
+        +add_user_constraint(username, type, description, severity)
+        +get_user_constraints(username) List~tuple~
+    }
+    
+    %% ========== DATA ACCESS LAYER ==========
+    class UserRepository {
+        +String db_path
+        +find_by_username(username) User
+        +create_user(username, password, **kwargs) User
+        +authenticate(username, password) bool
+        +find_all() List~User~
+    }
+    
+    class FoodRepository {
+        +String db_path
+        +find_all() List~Food~
+        +find_by_id(food_id) Food
+    }
+    
+    class FoodLogRepository {
+        +String db_path
+        +create_log(user_id, food_id, date, portion) FoodLog
+        +find_by_user(user_id) List~FoodLog~
+        +find_all_for_user(user_id) List~dict~
+        +update_log(log_id, portion, date)
+        +delete_log(log_id)
+    }
+    
+    class ActivityRepository {
+        +String db_path
+        +find_all() List~Activity~
+        +find_by_id(activity_id) Activity
+    }
+    
+    class ActivityLogRepository {
+        +String db_path
+        +create_log(user_id, activity_id, date, count, kcal) ActivityLog
+        +find_by_user(user_id) List~ActivityLog~
+        +update_log(log_id, count, date, kcal)
+        +delete_log(log_id)
+    }
+    
+    class AdminRepository {
+        +String db_path
+        +find_by_username(username) Admin
+        +verify_password(username, password) bool
+        +create_recommendation(...) bool
+        +add_user_constraint(...) bool
+    }
+    
+    %% ========== RELATIONSHIPS ==========
+    
+    %% UI uses Services
+    LaihdutanytApp --> UserService : uses
+    LaihdutanytApp --> FoodService : uses
+    LaihdutanytApp --> ActivityService : uses
+    LaihdutanytApp --> AdminService : uses
+    
+    LoginView --> UserService : uses
+    LoginView --> AdminService : uses
+    FoodView --> FoodService : uses
+    ActivityView --> ActivityService : uses
+    AdminView --> AdminService : uses
+    AdminView --> UserService : uses
+    
+    %% Services use Repositories
+    UserService --> UserRepository : uses
+    FoodService --> FoodRepository : uses
+    FoodService --> FoodLogRepository : uses
+    ActivityService --> ActivityRepository : uses
+    ActivityService --> ActivityLogRepository : uses
+    AdminService --> AdminRepository : uses
+    AdminService --> UserRepository : uses
+    
+    %% Repositories access Database (represented by connection)
+    UserRepository ..> Database : queries
+    FoodRepository ..> Database : queries
+    FoodLogRepository ..> Database : queries
+    ActivityRepository ..> Database : queries
+    ActivityLogRepository ..> Database : queries
+    AdminRepository ..> Database : queries
+    
+    class Database {
+        <<SQLite>>
+        +user table
+        +admin table
+        +food table
+        +activity table
+        +foodlog table
+        +activitylog table
+        +recommendation table
+        +user_constraint table
+    }
+    
+    %% ========== NOTES ==========
+    note for LaihdutanytApp "Main window orchestrator\nManages view lifecycle\nCoordinates services"
+    note for UserService "Business logic:\n- Authentication\n- User validation\n- Profile management"
+    note for FoodService "Business logic:\n- Food logging\n- Date categorization\n- Daily aggregation"
+    note for UserRepository "Data access:\n- SQL queries\n- Object mapping\n- No business logic"

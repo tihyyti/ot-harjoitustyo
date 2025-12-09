@@ -1,7 +1,7 @@
-# week 4: Modifioitu generoitu koodi päättyy
+# week 4: Modifioitu generoitu koodi alkaa
 """
 scripts/aggregate_totals.py
-CLI: Print aggregated daily totals (kcal) for a user.
+CLI: Print aggregated daily totals (calories) for a user.
 Usage:
     python3 scripts/aggregate_totals.py username [--db path_to_db]
 Example:
@@ -22,27 +22,27 @@ def find_user_id(conn: sqlite3.Connection, username: str) -> Optional[str]:
     row = cur.fetchone()
     return row[0] if row else None
 
-def aggregate_daily_totals(conn: sqlite3.Connection, user_id: str):
+def aggregate_daily_activities_totals(conn: sqlite3.Connection, user_id: str):
     """
-    Aggregates kcal burned per date for given user_id.
-    Calculation: total_kcal = sum( (activity) * kcal_per_activity )
+    Aggregates calories burned per date for given user_id.
+    Calculation: total_calories = sum( (activity_count) * kcal_burned )
     """
     cur = conn.cursor()
     cur.execute("""
-        SELECT fl.date AS date,
-               SUM( (fl.activity) * COALESCE(f.kcal_per_activity, 0.0) ) AS total_kcal,
+        SELECT al.date AS date,
+               SUM( (al.activity_count / 1000.0) * COALESCE(al.kcal_burned, 0.0) ) AS total_calories,
                COUNT(*) AS entries
-        FROM activitylog fl
-        LEFT JOIN activity f ON fl.activity_id = f.activity_id
-        WHERE fl.user_id = ?
-        GROUP BY fl.date
-        ORDER BY fl.date DESC
+        FROM activitylog al
+        LEFT JOIN activity a ON al.activity_id = a.activity_id
+        WHERE al.user_id = ?
+        GROUP BY al.date
+        ORDER BY al.date DESC
     """, (user_id,))
     return cur.fetchall()
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Aggregate daily kcal totals for a user")
-    parser.add_argument("username", help="username (e.g. demo)")
+    parser = argparse.ArgumentParser(description="\nAggregate daily calorie totals for a user")
+    parser.add_argument("username", help="username (e.g. demouser)")
     parser.add_argument("--db", help="path to SQLite DB", default=DEFAULT_DB)
     args = parser.parse_args(argv)
 
@@ -61,10 +61,10 @@ def main(argv=None):
             print(f"No activity logs for user '{args.username}'.")
             return
         print(f"Daily totals for user '{args.username}':")
-        print("{:12s}  {:10s}  {:8s}".format("Date", "Kcal", "Entries"))
-        print("-" * 36)
-        for date, total_kcal, entries in rows:
-            print(f"{date:12s}  {total_kcal:10.1f}  {entries:8d}")
+        print("{:12s}  {:10s}  {:8s}".format("\nDate", "Calories (kcal)", "Entries"))
+        print("-" * 38)
+        for date, total_calories, entries in rows:
+            print(f"{date:12s}  {total_calories:10.1f}  {entries:8d}")
     finally:
         conn.close()
 

@@ -94,6 +94,35 @@ CREATE TABLE IF NOT EXISTS statistics (
     weight_change REAL,
     FOREIGN KEY(user_id) REFERENCES "user"(user_id) ON DELETE CASCADE
 );
+
+-- RECOMMENDATIONS (admin recommendations for users)
+CREATE TABLE IF NOT EXISTS recommendation (
+    recommendation_id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    admin_id TEXT,
+    recommendation_type TEXT,
+    title TEXT,
+    description TEXT,
+    target_kcal_min REAL,
+    target_kcal_max REAL,
+    suggested_activities TEXT,
+    notes TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    status TEXT DEFAULT 'active',
+    FOREIGN KEY(user_id) REFERENCES "user"(user_id) ON DELETE CASCADE,
+    FOREIGN KEY(admin_id) REFERENCES admin(admin_id) ON DELETE SET NULL
+);
+
+-- CONSTRAINTS (user constraints and disabilities for AI/admin consideration)
+CREATE TABLE IF NOT EXISTS user_constraint (
+    constraint_id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    constraint_type TEXT,
+    description TEXT,
+    severity TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES "user"(user_id) ON DELETE CASCADE
+);
 """
 
 def ensure_dir(path):

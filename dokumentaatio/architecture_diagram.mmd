@@ -1,0 +1,86 @@
+%% Laihdutanyt_v2 Application Architecture Diagram
+
+graph TB
+    subgraph "Presentation Layer - UI"
+        LoginView[Login & Register View<br/>- User authentication<br/>- Admin login<br/>- User registration]
+        MainMenu[Main Menu View<br/>- Dashboard buttons<br/>- Window management<br/>- Grid/Cascade layouts]
+        FoodView[Food Dashboard View<br/>- Food logging form<br/>- Daily food list<br/>- View all logs]
+        ActivityView[Activity Dashboard View<br/>- Activity logging form<br/>- Daily activity list<br/>- View all logs]
+        FoodTotalsView[Food Totals View<br/>- Daily aggregations<br/>- Date highlighting<br/>- Past/Today/Future]
+        ActivityTotalsView[Activity Totals View<br/>- Daily aggregations<br/>- Calories burned<br/>- Time categories]
+        AdminView[Admin Panel View<br/>- User management<br/>- Recommendations<br/>- Constraints & Health<br/>- AI Trainer placeholder]
+        LogsView[All Logs Viewer<br/>- Edit entries<br/>- Delete entries<br/>- Filter by date]
+    end
+    
+    subgraph "Business Logic Layer - Services"
+        UserService[UserService<br/>- authenticate_user<br/>- register_user<br/>- get_user_summary<br/>- get_all_users]
+        FoodService[FoodService<br/>- log_food<br/>- get_daily_totals<br/>- update_food_log<br/>- delete_food_log]
+        ActivityService[ActivityService<br/>- log_activity<br/>- get_daily_totals<br/>- update_activity_log<br/>- delete_activity_log]
+        AdminService[AdminService<br/>- authenticate_admin<br/>- create_recommendation<br/>- add_user_constraint<br/>- get_users_summary]
+    end
+    
+    subgraph "Data Access Layer - Repositories"
+        UserRepo[UserRepository<br/>- find_by_username<br/>- create_user<br/>- authenticate<br/>- find_all]
+        FoodRepo[FoodRepository<br/>- find_all<br/>- find_by_id]
+        ActivityRepo[ActivityRepository<br/>- find_all<br/>- find_by_id]
+        FoodLogRepo[FoodLogRepository<br/>- create_log<br/>- find_by_user<br/>- find_all_for_user]
+        ActivityLogRepo[ActivityLogRepository<br/>- create_log<br/>- find_by_user<br/>- find_all_for_user]
+        AdminRepo[AdminRepository<br/>- find_by_username<br/>- verify_password<br/>- create_admin]
+    end
+    
+    subgraph "Data Layer - Persistence"
+        DB[(SQLite Database<br/>laihdutanyt.db<br/><br/>Tables:<br/>user, admin, food,<br/>activity, foodlog,<br/>activitylog,<br/>recommendation,<br/>user_constraint)]
+    end
+    
+    %% UI to Services connections
+    LoginView --> UserService
+    LoginView --> AdminService
+    MainMenu --> UserService
+    FoodView --> FoodService
+    ActivityView --> ActivityService
+    FoodTotalsView --> FoodService
+    ActivityTotalsView --> ActivityService
+    AdminView --> AdminService
+    LogsView --> FoodService
+    LogsView --> ActivityService
+    
+    %% Services to Repositories connections
+    UserService --> UserRepo
+    FoodService --> FoodRepo
+    FoodService --> FoodLogRepo
+    ActivityService --> ActivityRepo
+    ActivityService --> ActivityLogRepo
+    AdminService --> AdminRepo
+    AdminService --> UserRepo
+    
+    %% Repositories to Database connections
+    UserRepo --> DB
+    FoodRepo --> DB
+    ActivityRepo --> DB
+    FoodLogRepo --> DB
+    ActivityLogRepo --> DB
+    AdminRepo --> DB
+    
+    %% Styling
+    style LoginView fill:#90caf9,stroke:#1976d2,stroke-width:2px
+    style MainMenu fill:#90caf9,stroke:#1976d2,stroke-width:2px
+    style FoodView fill:#90caf9,stroke:#1976d2,stroke-width:2px
+    style ActivityView fill:#90caf9,stroke:#1976d2,stroke-width:2px
+    style FoodTotalsView fill:#90caf9,stroke:#1976d2,stroke-width:2px
+    style ActivityTotalsView fill:#90caf9,stroke:#1976d2,stroke-width:2px
+    style AdminView fill:#ff9800,stroke:#f57c00,stroke-width:2px
+    style LogsView fill:#90caf9,stroke:#1976d2,stroke-width:2px
+    
+    style UserService fill:#4caf50,stroke:#388e3c,stroke-width:2px
+    style FoodService fill:#4caf50,stroke:#388e3c,stroke-width:2px
+    style ActivityService fill:#4caf50,stroke:#388e3c,stroke-width:2px
+    style AdminService fill:#ff9800,stroke:#f57c00,stroke-width:2px
+    
+    style UserRepo fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px
+    style FoodRepo fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px
+    style ActivityRepo fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px
+    style FoodLogRepo fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px
+    style ActivityLogRepo fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px
+    style AdminRepo fill:#9c27b0,stroke:#7b1fa2,stroke-width:2px
+    
+    style DB fill:#f44336,stroke:#d32f2f,stroke-width:3px,color:#fff

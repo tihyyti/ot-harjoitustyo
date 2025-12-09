@@ -23,7 +23,7 @@ def find_user_id(conn: sqlite3.Connection, username: str) -> Optional[str]:
     row = cur.fetchone()
     return row[0] if row else None
 
-def aggregate_daily_totals(conn: sqlite3.Connection, user_id: str):
+def aggregate_daily_foods_totals(conn: sqlite3.Connection, user_id: str):
     """
     Aggregates calories per date for given user_id.
     Calculation: total_calories = sum( (portion_size_g / 100.0) * calories_per_portion )
@@ -31,7 +31,7 @@ def aggregate_daily_totals(conn: sqlite3.Connection, user_id: str):
     cur = conn.cursor()
     cur.execute("""
         SELECT fl.date AS date,
-               SUM( (fl.portion_size_g / 100.0) * COALESCE(f.calories_per_portion, 0.0) ) AS total_calories,
+               SUM( (fl.portion_size_g / 100.0) * COALESCE(f.kcal_per_portion, 0.0) ) AS total_calories,
                COUNT(*) AS entries
         FROM foodlog fl
         LEFT JOIN food f ON fl.food_id = f.food_id
@@ -42,7 +42,7 @@ def aggregate_daily_totals(conn: sqlite3.Connection, user_id: str):
     return cur.fetchall()
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Aggregate daily calorie totals for a user")
+    parser = argparse.ArgumentParser(description="\nAggregate daily calorie totals for a user")
     parser.add_argument("username", help="username (e.g. demo)")
     parser.add_argument("--db", help="path to SQLite DB", default=DEFAULT_DB)
     args = parser.parse_args(argv)
@@ -62,8 +62,8 @@ def main(argv=None):
             print(f"No food logs for user '{args.username}'.")
             return
         print(f"Daily totals for user '{args.username}':")
-        print("{:12s}  {:10s}  {:8s}".format("Date", "Calories", "Entries"))
-        print("-" * 36)
+        print("{:12s}  {:10s}  {:8s}".format("\nDate", "Calories (kcal)", "Entries"))
+        print("-" * 38)
         for date, total_calories, entries in rows:
             print(f"{date:12s}  {total_calories:10.1f}  {entries:8d}")
     finally:
