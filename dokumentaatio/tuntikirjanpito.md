@@ -24,4 +24,4 @@
                     - Create Recommendations
                     - Track health constraints
                     - Preview of future AI features
-| 09.12.  11   | Admin-db-table, Docs updated: User instructions, Architecture, Laihdutanyt release 2_1 Requirements Specification updated, changelog.md updated
+| 09.12.  11   | Admin-db-table, Docs updated: User instructions, Architecture refactoring into layered structure with the help of AI/Claude, Laihdutanyt release 2_1 Requirements Specification updated, changelog.md updated, 
