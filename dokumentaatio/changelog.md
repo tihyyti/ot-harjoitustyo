@@ -25,7 +25,7 @@ Week 5: All UI functions and mental model refactored
   - Food and Activity Loggings viewing windows with Edit/   Delete/Close functionality
   - Usability testing of implemented parts
 
-Week 6: All UI functions and mental model finalized. Admin/couch functionality and UI added. Architectural refactoring started.
+Week 6: All UI functions and mental model finalized. Admin/couch functionality and UI added. Architectural refactoring done in interactive mode with Claude 4.5. AI.
 
   - Use-case-testing and UI refactoring to Card-UI continued.
 
