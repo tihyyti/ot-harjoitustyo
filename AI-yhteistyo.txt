@@ -1,0 +1,20 @@
+
+OT-kurssi 2025 P2/ tihyyti
+
+Selvitys miten olen soveltanut AI assistentin Claude 4.5 AI palveluja:
+
+Clauden rooli: 
+   - Enimmäkseen vaatimusmäärittelyjen pohjalta tekninen ideointi ja dokumentointi sekä toteutussuunnittelu ja koodin generointi
+   - Merkittävä panos koodin refaktoroinnissa arkkitehtuurin järkeistämisen jälkeen (kerrosrakenne monoliitin sijaan).
+   - käyttäjätestipalautteen perusteella tehdyt koodin parantelut interaktiivisessa vuorovaikutuksessa käyttäjän kanssa
+        - dokumentointi-kansiossa on pari-kolme esimerkkiä työnkulusta: käyttäjäpalautteesta suoraan koodin paranteluun ja uusintatestaukseen
+  - dokumentoinnin strukturoinnissa ja viimeistelyssä hyvien toimintamallien perusteella
+
+Minun rooli: 
+  - Alkuperäinen ideointi ja vaatimusmäärittelyn teko sekä uusien ominaisuuksien ehdotus ja validointi palautteen ja kurssimateriaalin pohjalta
+  - priorisointi ja aikataulutus sekä selkeät tavoitteet kurssin kannalta
+  - kurssin assistenttien viikkopalautteiden vieminen kehitysprojektiin sekä vaatimusten ja dokumentaation tarkennus
+  - käytettävyystestaus ja Card-UI:n suunnittelu sekä johdonmukaisuuden ja yhtenäisyyden testaus ja koodaamiseen osallistuminen, 
+  - käyttäjän UI-testaus sekä integrointitestaus käyttötapausten kautta (human feed back laihduttamistarpeen tiedostajalta).
+  - loppupalautuksen suunnittelu, validointi ja toteutuksen toiminnallisuuden hienosäätö.
+  - projektiin sisältyi osaltani varsin paljon systeemi ja kaytettävyystestausta sekä virheiden jäljitys ja niiden jalostamista korjaus- ja parannustarpeiksi
