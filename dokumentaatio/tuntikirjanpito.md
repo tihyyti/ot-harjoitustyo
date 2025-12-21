@@ -24,4 +24,40 @@
                     - Create Recommendations
                     - Track health constraints
                     - Preview of future AI features
-| 09.12.  11   | Admin-db-table, Docs updated: User instructions, Architecture refactoring into layered structure with the help of AI/Claude, Laihdutanyt release 2_1 Requirements Specification updated, changelog.md updated, 
+| 09.12. | 11   | Admin-db-table, Docs updated: User instructions, Architecture refactoring into layered structure with the help of AI/Claude, Laihdutanyt release 2_1 Requirements Specification updated, changelog.md updated, 
+| 21.12. | 32   | ### For Release v2.1 Features (New Backend Services)
+
+Requirement setting, design, testing and delivery planning and validation, final delivery.
+
+#### 1. **Weight Logging UI** 
+**Backend Ready:** WeightLogService, WeightLogRepository
+**UI Needed:**
+- Weight log entry form (date, weight, notes)
+- Weight history list with week numbers
+- Weight trend visualization (optional)
+- "Log Weight" button in main dashboard
+
+#### 2. **Dietary Period Management UI** 
+**Backend Ready:** DietaryPeriodService, DietaryPeriodRepository
+**UI Needed:**
+- Period creation form
+- Active periods list
+- Period effectiveness summary
+- Suggested protocols selector
+- Integration with weight log display
+
+#### 3. **Statistics Dashboard** 
+**Backend Ready:** StatisticsService (not yet created, but data model ready)
+**UI Needed:**
+- Daily nutrient breakdown
+- Weekly progress reports
+- Monthly summaries
+- Charts and visualizations
+
+#### 4. **Enhanced Weight Log Display** 
+**Backend Ready:** `get_weight_history_with_weeks()` method
+**UI Features Needed:**
+- Week numbering (bold week starts)
+- Period annotations (📍 indicators)
+- Period start/end markers (▶/⏹)
+- Descending order display

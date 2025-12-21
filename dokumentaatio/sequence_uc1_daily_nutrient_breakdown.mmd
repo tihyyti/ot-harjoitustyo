@@ -1,0 +1,64 @@
+%% Sequence Diagram: UC-1 View Daily Nutrient Breakdown
+
+sequenceDiagram
+    actor User
+    participant UI as Statistics Dashboard
+    participant StatsSvc as StatisticsService
+    participant FoodLogRepo as FoodLogRepository
+    participant ActivityLogRepo as ActivityLogRepository
+    participant DB as SQLite Database
+    
+    User->>UI: Click "View Statistics"
+    activate UI
+    UI->>UI: Display date selector (default: today)
+    UI->>StatsSvc: get_daily_summary(user_id, date)
+    activate StatsSvc
+    
+    %% Get Food Data
+    StatsSvc->>FoodLogRepo: find_by_user_and_date(user_id, date)
+    activate FoodLogRepo
+    FoodLogRepo->>DB: SELECT fl.*, f.* FROM foodlog fl JOIN food f
+    DB-->>FoodLogRepo: food_log_rows[]
+    FoodLogRepo-->>StatsSvc: food_logs[]
+    deactivate FoodLogRepo
+    
+    %% Get Activity Data
+    StatsSvc->>ActivityLogRepo: find_by_user_and_date(user_id, date)
+    activate ActivityLogRepo
+    ActivityLogRepo->>DB: SELECT al.*, a.* FROM activitylog al JOIN activity a
+    DB-->>ActivityLogRepo: activity_log_rows[]
+    ActivityLogRepo-->>StatsSvc: activity_logs[]
+    deactivate ActivityLogRepo
+    
+    %% Calculate Nutrients
+    StatsSvc->>StatsSvc: calculate_total_kcal_consumed()
+    Note over StatsSvc: SUM((portion_g/100) * kcal_per_portion)
+    
+    StatsSvc->>StatsSvc: calculate_nutrient_breakdown()
+    Note over StatsSvc: Carbs: SUM((portion_g/100) * carbs_per_portion)<br/>Protein: SUM((portion_g/100) * protein_per_portion)<br/>Fat: SUM((portion_g/100) * fat_per_portion)
+    
+    StatsSvc->>StatsSvc: calculate_total_kcal_burned()
+    Note over StatsSvc: SUM(kcal_burned from activity_logs)
+    
+    StatsSvc->>StatsSvc: calculate_net_kcal()
+    Note over StatsSvc: net = consumed - burned
+    
+    StatsSvc-->>UI: daily_summary {<br/>  total_kcal_consumed: 1850,<br/>  total_kcal_burned: 350,<br/>  net_kcal: 1500,<br/>  carbs_g: 180, protein_g: 95, fat_g: 65,<br/>  user_kcal_min: 1500, user_kcal_max: 2500<br/>}
+    deactivate StatsSvc
+    
+    %% Display Results
+    UI->>UI: Render Daily Summary Card
+    Note over UI: Total Consumed: 1850 kcal<br/>Total Burned: 350 kcal<br/>Net: 1500 kcal (✓ Within goal)
+    
+    UI->>UI: Render Nutrient Breakdown Card
+    Note over UI: Pie Chart:<br/>Carbs: 180g (720 kcal, 39%)<br/>Protein: 95g (380 kcal, 21%)<br/>Fat: 65g (585 kcal, 32%)
+    
+    UI->>UI: Render Progress Bar
+    Note over UI: [1500]━━━━[1500]━━━━━━━━[2500]<br/>min    current        max
+    
+    UI-->>User: Display statistics dashboard
+    deactivate UI
+    
+    User->>UI: Change date to yesterday
+    UI->>StatsSvc: get_daily_summary(user_id, yesterday)
+    Note over UI,StatsSvc: Repeat calculation for new date

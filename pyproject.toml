@@ -1,15 +1,14 @@
-[project]
-name = "ot-harjoitustyo"
-version = "0.1.0"
-description = "laihdutanyt"
-authors = [
-    {name = "tihyyti",email = "timo.hyyppa@helsinki.fi"}
-]
+[tool.poetry]
+name = "laihdutanyt"
+version = "2.1.0"
+description = "Laihdutanyt - Weight Management Desktop Application"
+authors = ["tihyyti <timo.hyyppa@helsinki.fi>"]
 readme = "README.md"
-requires-python = "^3.10"
-dependencies = [
-    "cowsay (>=6.1,<7.0)"
-]
+packages = [{include = "**/*.py", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+cowsay = "^6.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -17,3 +16,10 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
+pytest-cov = "^6.0.0"
+pylint = "^3.3.0"
+invoke = "^2.2.0"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

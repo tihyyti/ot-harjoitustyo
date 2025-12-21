@@ -14,7 +14,7 @@ Quick setup
 
 2. Optionally import more sample foods and activities:
 
-   RUN: python3 ot-harjoitustyo/laihdutanyt_v2.py
+   RUN: python ot-harjoitustyo/src/laihdutanyt_v2.py
 
 3. Register and login 
    (there are stored credentials for a demo: user/pass and admin/apass)

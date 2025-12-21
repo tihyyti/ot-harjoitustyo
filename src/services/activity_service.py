@@ -22,7 +22,22 @@ class ActivityService:
     def get_activity_display_list(self) -> List[str]:
         """Get formatted activity list for UI dropdown (name|id format)"""
         activities = self.activity_repo.find_all()
+        # Return dict with display name and internal ID mapping
+        # For now, keep name|id format for backward compatibility with parsing logic
         return [f"{a['name']}|{a['activity_id']}" for a in activities]
+    
+    def get_activity_name_only_list(self) -> List[str]:
+        """Get activity names only (without IDs) for display"""
+        activities = self.activity_repo.find_all()
+        return [a['name'] for a in activities]
+    
+    def get_activity_id_by_name(self, activity_name: str) -> str:
+        """Get activity ID by name"""
+        activities = self.activity_repo.find_all()
+        for activity in activities:
+            if activity['name'] == activity_name:
+                return activity['activity_id']
+        raise ValueError(f"Activity '{activity_name}' not found")
     
     def log_activity(self, user_id: str, activity_selection: str, activity_count: float, date_str: str):
         """Log an activity entry for a user"""
@@ -60,10 +75,9 @@ class ActivityService:
             cur = conn.cursor()
             cur.execute("""
                 SELECT al.date AS date,
-                       SUM( (al.activity_count / 1000.0) * COALESCE(al.kcal_burned, 0.0) ) AS total_calories,
+                       SUM(COALESCE(al.kcal_burned, 0.0)) AS total_calories,
                        COUNT(*) AS entries
                 FROM activitylog al
-                LEFT JOIN activity a ON al.activity_id = a.activity_id
                 WHERE al.user_id = ?
                 GROUP BY al.date
                 ORDER BY al.date DESC
@@ -81,10 +95,10 @@ class ActivityService:
                 else:
                     category = 'future'
                     display_date = f"{date_str} 🔮 PLANNED"
-                
+
                 results.append({
                     'date': display_date,
-                    'total_kcal': f"{total_cal:.1f}",
+                    'total_kcal_burned': f"{total_cal:.1f}",
                     'entries': entries,
                     'category': category
                 })
@@ -121,12 +135,12 @@ class ActivityService:
         logs = self.activitylog_repo.find_by_user_and_date(user_id, date_str)
         formatted_logs = []
         for log in logs:
-            formatted_logs.append({
-                'date': log.get('date'),
-                'name': log.get('name') or '?',
-                'count': int(log.get('activity_count') or 0),
-                'kcal_burned': float(log.get('kcal_burned') or 0)
-            })
+            name = log.get('name') or '?'
+            count = int(log.get('activity_count') or 0)
+            kcal_burned = float(log.get('kcal_burned') or 0)
+            # Return formatted string with better spacing for display
+            # Using wider spacing between fields for better readability
+            formatted_logs.append(f"{name:<35} x{count:<4}     {kcal_burned:>6.2f} kcal burned")
         return formatted_logs
     
     def get_all_activity_logs(self, user_id: str):

@@ -1,0 +1,103 @@
+%% Sequence Diagram: UC-7 Track Weekly Weight Loss Goal
+
+sequenceDiagram
+    actor User
+    participant UI as Dashboard/Weight Log Form
+    participant WeightSvc as WeightLogService
+    participant WeightRepo as WeightLogRepository
+    participant StatsSvc as StatisticsService
+    participant UserRepo as UserRepository
+    participant DB as SQLite Database
+    
+    %% User logs new weight
+    User->>UI: Click "Log Weight" button
+    activate UI
+    UI->>UI: Display weight entry form
+    UI-->>User: Show form (date, weight, notes)
+    
+    User->>UI: Enter weight (78.5 kg) and notes
+    User->>UI: Click "Save"
+    
+    UI->>WeightSvc: log_weight(user_id, date, 78.5, notes)
+    activate WeightSvc
+    
+    %% Validate input
+    WeightSvc->>WeightSvc: validate_weight(78.5)
+    Note over WeightSvc: Check: weight > 0<br/>Check: weight < 500 (realistic)
+    
+    %% Save weight log
+    WeightSvc->>WeightRepo: create_log(user_id, date, weight, notes)
+    activate WeightRepo
+    WeightRepo->>DB: INSERT INTO weightlog<br/>VALUES (log_id, user_id, date, 78.5, notes)
+    DB-->>WeightRepo: success
+    WeightRepo-->>WeightSvc: weight_log {log_id, ...}
+    deactivate WeightRepo
+    
+    %% Calculate progress metrics
+    WeightSvc->>WeightRepo: get_weight_history(user_id, days=7)
+    activate WeightRepo
+    WeightRepo->>DB: SELECT * FROM weightlog<br/>WHERE user_id = ? AND date >= ?
+    DB-->>WeightRepo: weight_logs[]
+    WeightRepo-->>WeightSvc: [7 days ago: 79.1kg, today: 78.5kg]
+    deactivate WeightRepo
+    
+    WeightSvc->>WeightSvc: calculate_weekly_change()
+    Note over WeightSvc: weekly_change = 78.5 - 79.1 = -0.6 kg
+    
+    WeightSvc->>WeightRepo: get_weight_history(user_id, days=30)
+    activate WeightRepo
+    WeightRepo->>DB: SELECT * FROM weightlog<br/>WHERE user_id = ? AND date >= ?
+    DB-->>WeightRepo: weight_logs[]
+    WeightRepo-->>WeightSvc: [30 days ago: 81.0kg, today: 78.5kg]
+    deactivate WeightRepo
+    
+    WeightSvc->>WeightSvc: calculate_monthly_change()
+    Note over WeightSvc: monthly_change = 78.5 - 81.0 = -2.5 kg
+    
+    %% Get user targets
+    WeightSvc->>UserRepo: find_by_id(user_id)
+    activate UserRepo
+    UserRepo->>DB: SELECT * FROM user WHERE user_id = ?
+    DB-->>UserRepo: user_row
+    UserRepo-->>WeightSvc: user {weight_loss_target: 0.5 kg/week}
+    deactivate UserRepo
+    
+    %% Evaluate against targets
+    WeightSvc->>WeightSvc: evaluate_weekly_progress()
+    Note over WeightSvc: actual = -0.6 kg<br/>target = -0.5 kg<br/>progress_pct = (0.6 / 0.5) * 100 = 120%<br/>status = "Exceeding Goal ✅🎉"
+    
+    WeightSvc->>WeightSvc: evaluate_monthly_progress()
+    Note over WeightSvc: actual = -2.5 kg<br/>target = -2.0 kg (0.5 * 4 weeks)<br/>progress_pct = (2.5 / 2.0) * 100 = 125%<br/>status = "On Track ✅"
+    
+    %% Update statistics table
+    WeightSvc->>StatsSvc: update_weight_in_statistics(user_id, date, 78.5)
+    activate StatsSvc
+    StatsSvc->>DB: UPDATE statistics<br/>SET current_weight = 78.5,<br/>    weight_change = -0.1<br/>WHERE user_id = ? AND date = ?
+    Note over StatsSvc: weight_change = today's weight - yesterday's weight
+    DB-->>StatsSvc: success
+    deactivate StatsSvc
+    
+    WeightSvc-->>UI: progress_data {<br/>  current_weight: 78.5,<br/>  weekly_change: -0.6,<br/>  weekly_target: -0.5,<br/>  weekly_status: "Exceeding Goal ✅🎉",<br/>  monthly_change: -2.5,<br/>  monthly_target: -2.0,<br/>  monthly_status: "On Track ✅"<br/>}
+    deactivate WeightSvc
+    
+    %% Display success and progress
+    UI->>UI: Show success message
+    Note over UI: "Weight logged successfully!"
+    
+    UI->>UI: Update Weight Progress Card
+    Note over UI: 📊 Weekly Progress<br/>You've lost 0.6 kg this week<br/>(Target: 0.5 kg) 🎉<br/><br/>📈 Monthly Progress<br/>-2.5 kg of -2.0 kg goal 🎯
+    
+    UI->>UI: Check if milestone reached
+    alt Milestone Reached (e.g., 5kg total loss)
+        UI->>UI: Show achievement popup
+        Note over UI: "🏆 Milestone Achieved!<br/>You've lost 5kg total!<br/>Keep up the great work!"
+    end
+    
+    UI->>UI: Update weight trend chart
+    Note over UI: Refresh line chart with new data point
+    
+    UI-->>User: Display updated dashboard with progress
+    deactivate UI
+    
+    %% System checks for alerts
+    Note over WeightSvc: Background: Check for concerning patterns<br/>If weight change > 1.5 kg/week: Flag for review<br/>If no weight logged in 14 days: Send reminder

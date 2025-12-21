@@ -1,0 +1,140 @@
+%% Sequence Diagram: UC-5 Coach Creates Dietary Plan Recommendation
+
+sequenceDiagram
+    actor Coach
+    participant AdminUI as Admin Dashboard
+    participant PlanSvc as DietaryPlanService
+    participant UserRepo as UserRepository
+    participant StatsSvc as StatisticsService
+    participant PlanRepo as DietaryPlanRepository
+    participant DB as SQLite Database
+    
+    %% Coach initiates plan creation
+    Coach->>AdminUI: Navigate to user's profile page
+    AdminUI-->>Coach: Display user summary
+    
+    Coach->>AdminUI: Click "Create Dietary Plan"
+    activate AdminUI
+    
+    %% Get user context for pre-filling
+    AdminUI->>UserRepo: find_by_id(user_id)
+    activate UserRepo
+    UserRepo->>DB: SELECT * FROM user WHERE user_id = ?
+    DB-->>UserRepo: user_row
+    UserRepo-->>AdminUI: user {weight: 78.5, kcal_min: 1500, kcal_max: 2500...}
+    deactivate UserRepo
+    
+    AdminUI->>StatsSvc: get_recent_averages(user_id, days=30)
+    activate StatsSvc
+    StatsSvc->>DB: SELECT AVG(total_carbs_g), AVG(total_protein_g), AVG(total_fat_g)<br/>FROM statistics WHERE user_id = ? AND date >= ?
+    DB-->>StatsSvc: avg_nutrients
+    StatsSvc-->>AdminUI: current_averages {carbs: 180, protein: 70, fat: 65}
+    deactivate StatsSvc
+    
+    %% Display plan creation form
+    AdminUI->>AdminUI: Show DietaryPlan creation form
+    AdminUI-->>Coach: Display form with pre-filled values
+    Note over AdminUI: Plan Name: [empty]<br/>Description: [empty]<br/><br/>Current Values → Suggested<br/>Kcal: 1500-2500 → 1600-2200<br/>Protein: 70g → 100g<br/>Carbs: 180g → 160g<br/>Fat: 65g → 55g<br/>Weekly Loss: → 0.5kg<br/>Exercise: → 150 min/week
+    
+    %% Coach fills form
+    Coach->>AdminUI: Enter plan details
+    Note over Coach: Plan Name: "Holiday Weight Loss Plan"<br/>Description: "Intensive 8-week plan<br/>              focusing on protein increase"<br/>Kcal: 1600-2200<br/>Protein: 100g, Carbs: 150g, Fat: 55g<br/>Weekly Loss: 0.6kg<br/>Exercise: 180 min/week<br/>Duration: 2025-12-20 to 2026-02-15
+    
+    Coach->>AdminUI: Click "Validate Plan"
+    
+    %% Validate plan parameters
+    AdminUI->>PlanSvc: validate_dietary_plan(plan_data)
+    activate PlanSvc
+    
+    PlanSvc->>PlanSvc: check_realistic_targets()
+    Note over PlanSvc: Validations:<br/>✓ kcal_min < kcal_max<br/>✓ kcal_min >= 1200 (minimum safe)<br/>✓ kcal_max <= 3500 (maximum reasonable)<br/>✓ weekly_loss <= 1.0 kg (safe rate)<br/>✓ protein + carbs + fat balance<br/>✓ start_date < end_date
+    
+    alt Validation fails
+        PlanSvc-->>AdminUI: validation_errors []
+        AdminUI-->>Coach: Show errors: "Weekly loss of 0.6kg may be aggressive"
+        Coach->>AdminUI: Adjust parameters
+    else Validation succeeds
+        PlanSvc-->>AdminUI: validation_passed ✓
+    end
+    
+    deactivate PlanSvc
+    
+    %% Coach confirms and saves
+    Coach->>AdminUI: Click "Save and Activate Plan"
+    
+    AdminUI->>PlanSvc: create_dietary_plan(coach_id, user_id, plan_data)
+    activate PlanSvc
+    
+    %% Check for existing active plans
+    PlanSvc->>PlanRepo: find_active_plans(user_id)
+    activate PlanRepo
+    PlanRepo->>DB: SELECT * FROM dietary_plan<br/>WHERE user_id = ? AND status = 'active'
+    DB-->>PlanRepo: existing_plans[]
+    PlanRepo-->>PlanSvc: [Old Plan (active)]
+    deactivate PlanRepo
+    
+    alt User has existing active plan
+        PlanSvc->>AdminUI: Prompt: "User has active plan. Deactivate it?"
+        AdminUI-->>Coach: Show confirmation dialog
+        Coach->>AdminUI: Confirm "Deactivate old plan"
+        
+        PlanSvc->>PlanRepo: update_plan_status(old_plan_id, 'completed')
+        activate PlanRepo
+        PlanRepo->>DB: UPDATE dietary_plan<br/>SET status = 'completed'<br/>WHERE plan_id = ?
+        DB-->>PlanRepo: success
+        deactivate PlanRepo
+    end
+    
+    %% Create new plan
+    PlanSvc->>PlanRepo: create_plan(plan_data)
+    activate PlanRepo
+    PlanRepo->>PlanRepo: Generate plan_id (UUID)
+    PlanRepo->>DB: INSERT INTO dietary_plan VALUES<br/>(plan_id, coach_id, user_id, 'Holiday Weight Loss Plan',<br/>description, 1600, 2200, 100, 150, 55,<br/>0.6, 180, '2025-12-20', '2026-02-15', 'active')
+    DB-->>PlanRepo: success
+    PlanRepo-->>PlanSvc: new_plan {plan_id, ...}
+    deactivate PlanRepo
+    
+    %% Update user's current goals
+    PlanSvc->>UserRepo: update_user_goals(user_id, kcal_min=1600, kcal_max=2200)
+    activate UserRepo
+    UserRepo->>DB: UPDATE user SET kcal_min = 1600, kcal_max = 2200<br/>WHERE user_id = ?
+    Note over UserRepo: Update user's goals to match plan
+    DB-->>UserRepo: success
+    deactivate UserRepo
+    
+    %% Create recommendation notification
+    PlanSvc->>DB: INSERT INTO recommendation VALUES<br/>(rec_id, user_id, coach_id, 'dietary_plan',<br/>'New Dietary Plan Created',<br/>'Your coach has created a new plan for you...',<br/>1600, 2200, null, null, CURRENT_TIMESTAMP, 'active')
+    Note over PlanSvc: Notify user about new plan
+    
+    PlanSvc-->>AdminUI: plan_created {plan_id, status: 'active'}
+    deactivate PlanSvc
+    
+    %% Show success
+    AdminUI->>AdminUI: Display success message
+    Note over AdminUI: ✅ Dietary Plan Created Successfully!<br/>Plan: Holiday Weight Loss Plan<br/>Duration: 8 weeks<br/>Status: Active
+    
+    AdminUI->>AdminUI: Update user's profile view
+    Note over AdminUI: Current Active Plan:<br/>🎯 Holiday Weight Loss Plan<br/>📅 Dec 20 - Feb 15 (8 weeks)<br/>🥗 1600-2200 kcal/day<br/>💪 Target: -0.6 kg/week
+    
+    AdminUI-->>Coach: Show plan summary with options
+    deactivate AdminUI
+    
+    %% Optional: Coach sends message to user
+    alt Coach wants to add personal message
+        Coach->>AdminUI: Click "Send Message to User"
+        AdminUI->>AdminUI: Open message compose dialog
+        Coach->>AdminUI: Write message and send
+        AdminUI->>DB: INSERT INTO recommendation<br/>VALUES (rec_id, user_id, coach_id, 'message', ...)
+        Note over AdminUI: User receives notification
+    end
+    
+    %% User sees the new plan
+    Note over Coach,DB: Later, when user logs in...
+    
+    participant UserDashboard as User Dashboard
+    
+    UserDashboard->>DB: SELECT * FROM dietary_plan<br/>WHERE user_id = ? AND status = 'active'
+    DB-->>UserDashboard: active_plan {}
+    
+    UserDashboard->>UserDashboard: Display Plan Card
+    Note over UserDashboard: 🎯 Active Dietary Plan<br/>Holiday Weight Loss Plan<br/>Your coach recommends:<br/>• 1600-2200 kcal daily<br/>• 100g protein, 150g carbs, 55g fat<br/>• 180 min exercise/week<br/>• Target: -0.6kg/week<br/><br/>[View Full Plan] [Track Progress]

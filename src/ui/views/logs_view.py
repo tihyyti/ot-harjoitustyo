@@ -17,7 +17,7 @@ class AllFoodLogsWindow(tk.Toplevel):
         self.food_service = food_service
         self.user_id = user_id
         self.title("All Food Logs")
-        self.geometry("520x600")  # Narrower width to match other windows
+        self.geometry("500x700")  # Narrower width to match other windows
         self._build()
         self.refresh_logs()
 
@@ -29,7 +29,7 @@ class AllFoodLogsWindow(tk.Toplevel):
         tk.Button(topframe, text="Refresh", command=self.refresh_logs, font=("Arial", 15)).pack(side="right", padx=5)
         
         style = ttk.Style()
-        style.configure("FoodLogs.Treeview", font=("Arial", 11), rowheight=25)
+        style.configure("FoodLogs.Treeview", font=("Arial", 12), rowheight=25)
         style.configure("FoodLogs.Treeview.Heading", font=("Arial", 12, "bold"))
         
         columns = ("date", "food", "portion", "kcal", "log_id")
@@ -117,7 +117,7 @@ class AllActivityLogsWindow(tk.Toplevel):
         self.activity_service = activity_service
         self.user_id = user_id
         self.title("All Activity Logs")
-        self.geometry("520x600")  # Narrower width to match other windows
+        self.geometry("500x700")  # Narrower width to match other windows
         self._build()
         self.refresh_logs()
 
@@ -129,7 +129,7 @@ class AllActivityLogsWindow(tk.Toplevel):
         tk.Button(topframe, text="Refresh", command=self.refresh_logs, font=("Arial", 15)).pack(side="right", padx=5)
         
         style = ttk.Style()
-        style.configure("ActivityLogs.Treeview", font=("Arial", 11), rowheight=25)
+        style.configure("ActivityLogs.Treeview", font=("Arial", 12), rowheight=25)
         style.configure("ActivityLogs.Treeview.Heading", font=("Arial", 12, "bold"))
         
         columns = ("date", "activity", "count", "kcal", "log_id")

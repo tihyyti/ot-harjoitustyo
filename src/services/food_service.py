@@ -20,9 +20,24 @@ class FoodService:
         return self.food_repo.find_all()
     
     def get_food_display_list(self) -> List[str]:
-        """Get formatted food list for UI dropdown (name|id format)"""
+        """Get formatted food list for UI dropdown (name only, id stored internally)"""
         foods = self.food_repo.find_all()
+        # Return dict with display name and internal ID mapping
+        # For now, keep name|id format for backward compatibility with parsing logic
         return [f"{f['name']}|{f['food_id']}" for f in foods]
+    
+    def get_food_name_only_list(self) -> List[str]:
+        """Get food names only (without IDs) for display"""
+        foods = self.food_repo.find_all()
+        return [f['name'] for f in foods]
+    
+    def get_food_id_by_name(self, food_name: str) -> str:
+        """Get food ID by name"""
+        foods = self.food_repo.find_all()
+        for food in foods:
+            if food['name'] == food_name:
+                return food['food_id']
+        raise ValueError(f"Food '{food_name}' not found")
     
     def log_food(self, user_id: str, food_selection: str, portion_g: float, date_str: str):
         """Log a food entry for a user"""
@@ -56,7 +71,7 @@ class FoodService:
             cur = conn.cursor()
             cur.execute("""
                 SELECT fl.date AS date,
-                       SUM( (fl.portion_size_g / 100.0) * COALESCE(f.kcal_per_portion, 0.0) ) AS total_calories,
+                       SUM( (fl.portion_size_g / 100) * COALESCE(f.kcal_per_portion, 0.0) ) AS total_calories,
                        COUNT(*) AS entries
                 FROM foodlog fl
                 LEFT JOIN food f ON fl.food_id = f.food_id
@@ -121,8 +136,9 @@ class FoodService:
             portion = int(log.get("portion_size_g") or 100)
             cal_per = int(log.get("kcal_per_portion") or 0)
             total_cal = float((portion / 100.0) * cal_per)
-            # Return formatted string for display in listbox
-            formatted_logs.append(f"{name} - {portion}g - {total_cal:.1f} kcal")
+            # Return formatted string with better spacing for display
+            # Using wider spacing between fields for better readability
+            formatted_logs.append(f"{name:<35} {portion:>5}g      {total_cal:>6.1f} kcal")
         return formatted_logs
     
     def get_all_food_logs(self, user_id: str):

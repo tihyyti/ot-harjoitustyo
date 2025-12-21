@@ -8,8 +8,10 @@ from tkinter import messagebox, ttk
 from datetime import date
 from typing import TYPE_CHECKING
 
-from services.activity_service import ActivityService
-from services.user_service import UserService
+""" from services.activity_service import ActivityService
+from services.user_service import UserService """
+
+from services import ActivityService, UserService
 
 if TYPE_CHECKING:
     from ui.app import LaihdutanytApp
@@ -24,7 +26,7 @@ class ActivityLogFrame(tk.Frame):
         self.user_id = user_id
         
         # Date input
-        self.date_var = tk.StringVar(value=date.today().strftime("%Y-%m-%d"))
+        self.date_var = tk.StringVar(value=date.today().strftime('%Y-%m-%d'))
         
         # Activity dropdown
         self.activity_var = tk.StringVar()
@@ -32,8 +34,8 @@ class ActivityLogFrame(tk.Frame):
         # Count input
         self.count_var = tk.IntVar(value=1)
         
-        # Logs list
-        self.logs_list = tk.Listbox(self, height=10, font=("Arial", 10))
+        # Logs list with improved spacing
+        self.logs_list = tk.Listbox(self, height=12, font=("Arial", 12))
         
         self._setup_ui()
         self._load_activity_list()
@@ -54,55 +56,82 @@ class ActivityLogFrame(tk.Frame):
         tk.Label(topframe, text="Date (YYYY-MM-DD)", font=("Arial", 11)).grid(row=2, column=0, sticky="w", padx=5)
         tk.Entry(topframe, textvariable=self.date_var, width=15, font=("Arial", 11)).grid(row=2, column=1, sticky="w", padx=5)
         
-        tk.Button(topframe, text="Add Activity", command=self._add_activity, font=("Arial", 12, "bold"), bg="#4CAF50", fg="white", padx=20, pady=5).grid(row=3, column=0, columnspan=2, pady=10)
+        tk.Button(topframe, text="Add Activity", command=self._add_activity, font=("Arial", 11, "bold"), bg="#4CAF50").grid(row=3, column=0, columnspan=2, pady=10)
         
-        # Today activities list
-        listframe = tk.Frame(self)
-        listframe.pack(fill="both", expand=True, padx=10, pady=5)
+        # Today's logs section
+        tk.Label(self, text="Today's Activity Log", font=("Arial", 12, "bold")).pack(pady=5)
         
-        tk.Label(listframe, text="Today Activity Log:", font=("Arial", 12, "bold")).pack(anchor="w")
+        # Add calculation info
+        calc_info = tk.Label(self, text="📊 Calories burned calculated per 1000 units (e.g., steps)", 
+                            font=("Arial", 9, "italic"), fg="#1976d2")
+        calc_info.pack()
         
-        self.logs_list.pack(fill="both", expand=True, pady=5)
+        # Add info about future events
+        info_label = tk.Label(self, text="ℹ️ Future planned activities will appear in 'View All Activity Logs'", 
+                             font=("Arial", 9, "italic"), fg="#555")
+        info_label.pack()
+        
+        self.logs_list.pack(fill="both", expand=True, padx=10, pady=5)
     
     def _load_activity_list(self):
         """Load available activities into dropdown"""
-        activities = self.activity_service.get_activity_display_list()
-        self.activity_cb["values"] = activities
-        if activities:
+        # Load names only for clean display
+        display_names = self.activity_service.get_activity_name_only_list()
+        self.activity_cb['values'] = display_names
+        if display_names:
             self.activity_cb.current(0)
     
     def _load_todays_logs(self):
-        """Load today activity logs"""
+        """Load today's activity logs"""
         self.logs_list.delete(0, tk.END)
-        today = date.today().strftime("%Y-%m-%d")
+        today = date.today().strftime('%Y-%m-%d')
         logs = self.activity_service.get_activity_logs_by_date(self.user_id, today)
         
-        for log in logs:
-            self.logs_list.insert(tk.END, log)
+        if not logs:
+            self.logs_list.insert(tk.END, "No activities logged for today")
+            return
+        
+        for log_text in logs:
+            self.logs_list.insert(tk.END, log_text)
     
     def _add_activity(self):
-        """Add new activity log"""
-        activity_str = self.activity_var.get()
+        """Add new activity log with smart feedback"""
+        from datetime import date as date_class
+        
+        activity_name = self.activity_var.get().strip()
         count = self.count_var.get()
         date_str = self.date_var.get()
         
-        if not activity_str:
-            messagebox.showwarning("Warning", "Please select an activity")
+        if not activity_name:
+            messagebox.showwarning("Input Required", "Please select an activity", parent=self)
             return
         
         try:
-            self.activity_service.log_activity(self.user_id, activity_str, count, date_str)
-            messagebox.showinfo("Success", f"Added {count}x {activity_str} for {date_str}")
+            # Get activity ID by name
+            activity_id = self.activity_service.get_activity_id_by_name(activity_name)
+            
+            # Log activity using ID (create selection string for compatibility)
+            activity_selection = f"{activity_name}|{activity_id}"
+            self.activity_service.log_activity(self.user_id, activity_selection, count, date_str)
+            
+            # Show feedback only for future dates
+            today = date_class.today().strftime('%Y-%m-%d')
+            if date_str > today:
+                messagebox.showinfo("Planned!", 
+                                  f"{activity_name} scheduled for {date_str}\n\nView in 'All Activity Logs'", 
+                                  parent=self)
+            
             self._load_todays_logs()
             
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to add activity: {str(e)}")
+            messagebox.showerror("Error", str(e), parent=self)
 
 
 class Dashboard_activity(tk.Toplevel):
     """Main Activity Dashboard window"""
     
-    def __init__(self, master: "LaihdutanytApp", user_service: UserService, activity_service: ActivityService, username: str, user_id: str):
+    def __init__(self, master: 'LaihdutanytApp', user_service: UserService,
+                 activity_service: ActivityService, username: str, user_id: str):
         super().__init__(master)
         self.title(f"Activity Dashboard - {username}")
         self.master = master
@@ -126,8 +155,10 @@ class Dashboard_activity(tk.Toplevel):
         nav_frame = tk.Frame(self)
         nav_frame.pack(fill="x", padx=10, pady=5)
         
-        tk.Button(nav_frame, text="Back to Main Menu", command=self._back_to_menu, font=("Arial", 12), bg="#d0d0d0").pack(side="left", padx=5)
-        tk.Button(nav_frame, text="View All Activity Logs", command=self._open_all_logs, font=("Arial", 12), bg="#a5d6a7").pack(side="right", padx=5)
+        tk.Button(nav_frame, text="← Back to Main Menu", command=self._back_to_menu, 
+                 font=("Arial", 12), bg="#d0d0d0").pack(side="left", padx=5)
+        tk.Button(nav_frame, text="View All Activity Logs", command=self._open_all_logs, 
+                 font=("Arial", 12), bg="#a5d6a7").pack(side="right", padx=5)
         
         # Activity logging frame
         self.activity_frame = ActivityLogFrame(self, activity_service, user_id)

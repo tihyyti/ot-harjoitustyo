@@ -477,7 +477,7 @@ class Dashboard_food(tk.Toplevel):
                 positions = self.master._calculate_window_positions()
                 win = AllFoodLogsWindow(self, self.db_path, self.user_id)
                 x, y = positions['all_food_logs']
-                win.geometry(f"435x750+{x}+{y}")
+                win.geometry(f"435x700+{x}+{y}")
                 self.master.open_windows['all_food_logs'] = win
             else:
                 self.master.open_windows['all_food_logs'].lift()
@@ -987,7 +987,7 @@ class Dashboard_activity(tk.Toplevel):
                 positions = self.master._calculate_window_positions()
                 win = AllActivityLogsWindow(self, self.db_path, self.user_id)
                 x, y = positions['all_activity_logs']
-                win.geometry(f"435x750+{x}+{y}")
+                win.geometry(f"435x700+{x}+{y}")
                 self.master.open_windows['all_activity_logs'] = win
             else:
                 self.master.open_windows['all_activity_logs'].lift()
@@ -998,7 +998,7 @@ class App(tk.Tk):
     def __init__(self, db_path):
         super().__init__()
         self.title("Laihdutanyt_v2")
-        self.geometry("350x500")
+        self.geometry("350x700")
         self.db_path = db_path
         self.user_repo = UserRepository(db_path)
         self.admin_repo = AdminRepository(db_path)
@@ -1199,52 +1199,52 @@ class App(tk.Tk):
         if self.open_windows['food_dashboard'] is None or not self.open_windows['food_dashboard'].winfo_exists():
             win = Dashboard_food(self, self.user_repo, self.current_username, self.db_path, self.current_user_id)
             x, y = positions['food_dashboard']
-            win.geometry(f"435x750+{x}+{y}")
+            win.geometry(f"435x700+{x}+{y}")
             self.open_windows['food_dashboard'] = win
         else:
             # Deiconify if minimized, then reposition
             self.open_windows['food_dashboard'].deiconify()
             x, y = positions['food_dashboard']
-            self.open_windows['food_dashboard'].geometry(f"435x750+{x}+{y}")
+            self.open_windows['food_dashboard'].geometry(f"435x700+{x}+{y}")
             self.open_windows['food_dashboard'].lift()
         
         # Open or reposition Daily Food Totals
         if self.open_windows['daily_food_totals'] is None or not self.open_windows['daily_food_totals'].winfo_exists():
             win = Dashboard_daily_foods_totals(self, self.user_repo, self.current_username, self.db_path, self.current_user_id)
             x, y = positions['daily_food_totals']
-            win.geometry(f"435x750+{x}+{y}")
+            win.geometry(f"435x700+{x}+{y}")
             self.open_windows['daily_food_totals'] = win
         else:
             # Deiconify if minimized, then reposition
             self.open_windows['daily_food_totals'].deiconify()
             x, y = positions['daily_food_totals']
-            self.open_windows['daily_food_totals'].geometry(f"435x750+{x}+{y}")
+            self.open_windows['daily_food_totals'].geometry(f"435x700+{x}+{y}")
             self.open_windows['daily_food_totals'].lift()
         
         # Open or reposition Activity Dashboard
         if self.open_windows['activity_dashboard'] is None or not self.open_windows['activity_dashboard'].winfo_exists():
             win = Dashboard_activity(self, self.user_repo, self.current_username, self.db_path, self.current_user_id)
             x, y = positions['activity_dashboard']
-            win.geometry(f"435x750+{x}+{y}")
+            win.geometry(f"435x700+{x}+{y}")
             self.open_windows['activity_dashboard'] = win
         else:
             # Deiconify if minimized, then reposition
             self.open_windows['activity_dashboard'].deiconify()
             x, y = positions['activity_dashboard']
-            self.open_windows['activity_dashboard'].geometry(f"435x750+{x}+{y}")
+            self.open_windows['activity_dashboard'].geometry(f"435x700+{x}+{y}")
             self.open_windows['activity_dashboard'].lift()
         
         # Open or reposition Daily Activity Totals
         if self.open_windows['daily_activity_totals'] is None or not self.open_windows['daily_activity_totals'].winfo_exists():
             win = Dashboard_daily_activities_totals(self, self.user_repo, self.current_username, self.db_path, self.current_user_id)
             x, y = positions['daily_activity_totals']
-            win.geometry(f"435x750+{x}+{y}")
+            win.geometry(f"435x700+{x}+{y}")
             self.open_windows['daily_activity_totals'] = win
         else:
             # Deiconify if minimized, then reposition
             self.open_windows['daily_activity_totals'].deiconify()
             x, y = positions['daily_activity_totals']
-            self.open_windows['daily_activity_totals'].geometry(f"435x750+{x}+{y}")
+            self.open_windows['daily_activity_totals'].geometry(f"435x700+{x}+{y}")
             self.open_windows['daily_activity_totals'].lift()
         
         # Open or reposition All Food Logs
@@ -1253,13 +1253,13 @@ class App(tk.Tk):
             if self.open_windows['food_dashboard'] and self.open_windows['food_dashboard'].winfo_exists():
                 win = AllFoodLogsWindow(self.open_windows['food_dashboard'], self.db_path, self.current_user_id)
                 x, y = positions['all_food_logs']
-                win.geometry(f"435x750+{x}+{y}")
+                win.geometry(f"435x700+{x}+{y}")
                 self.open_windows['all_food_logs'] = win
         else:
             # Deiconify if minimized, then reposition
             self.open_windows['all_food_logs'].deiconify()
             x, y = positions['all_food_logs']
-            self.open_windows['all_food_logs'].geometry(f"435x750+{x}+{y}")
+            self.open_windows['all_food_logs'].geometry(f"435x700+{x}+{y}")
             self.open_windows['all_food_logs'].lift()
         
         # Open or reposition All Activity Logs
@@ -1268,13 +1268,13 @@ class App(tk.Tk):
             if self.open_windows['activity_dashboard'] and self.open_windows['activity_dashboard'].winfo_exists():
                 win = AllActivityLogsWindow(self.open_windows['activity_dashboard'], self.db_path, self.current_user_id)
                 x, y = positions['all_activity_logs']
-                win.geometry(f"435x750+{x}+{y}")
+                win.geometry(f"435x700+{x}+{y}")
                 self.open_windows['all_activity_logs'] = win
         else:
             # Deiconify if minimized, then reposition
             self.open_windows['all_activity_logs'].deiconify()
             x, y = positions['all_activity_logs']
-            self.open_windows['all_activity_logs'].geometry(f"435x750+{x}+{y}")
+            self.open_windows['all_activity_logs'].geometry(f"435x700+{x}+{y}")
             self.open_windows['all_activity_logs'].lift()
         
         # No messagebox - user sees what's happening!
@@ -1337,7 +1337,7 @@ class App(tk.Tk):
                 # Deiconify if minimized
                 window.deiconify()
                 # Position in cascade
-                window.geometry(f"435x750+{current_x}+{current_y}")
+                window.geometry(f"435x700+{current_x}+{current_y}")
                 # Don't lift - keep in cascade order
                 # Increment position for next window
                 current_x += cascade_offset_x
@@ -1376,7 +1376,7 @@ class App(tk.Tk):
             if self.open_windows['food_dashboard'] is None or not self.open_windows['food_dashboard'].winfo_exists():
                 win = Dashboard_food(self, self.user_repo, self.current_username, self.db_path, self.current_user_id)
                 x, y = positions['food_dashboard']
-                win.geometry(f"435x750+{x}+{y}")
+                win.geometry(f"435x700+{x}+{y}")
                 self.open_windows['food_dashboard'] = win
             else:
                 self.open_windows['food_dashboard'].lift()
@@ -1385,7 +1385,7 @@ class App(tk.Tk):
             if self.open_windows['activity_dashboard'] is None or not self.open_windows['activity_dashboard'].winfo_exists():
                 win = Dashboard_activity(self, self.user_repo, self.current_username, self.db_path, self.current_user_id)
                 x, y = positions['activity_dashboard']
-                win.geometry(f"435x750+{x}+{y}")
+                win.geometry(f"435x700+{x}+{y}")
                 self.open_windows['activity_dashboard'] = win
             else:
                 self.open_windows['activity_dashboard'].lift()
@@ -1394,7 +1394,7 @@ class App(tk.Tk):
             if self.open_windows['daily_food_totals'] is None or not self.open_windows['daily_food_totals'].winfo_exists():
                 win = Dashboard_daily_foods_totals(self, self.user_repo, self.current_username, self.db_path, self.current_user_id)
                 x, y = positions['daily_food_totals']
-                win.geometry(f"435x750+{x}+{y}")
+                win.geometry(f"435x700+{x}+{y}")
                 self.open_windows['daily_food_totals'] = win
             else:
                 self.open_windows['daily_food_totals'].lift()
@@ -1403,14 +1403,14 @@ class App(tk.Tk):
             if self.open_windows['daily_activity_totals'] is None or not self.open_windows['daily_activity_totals'].winfo_exists():
                 win = Dashboard_daily_activities_totals(self, self.user_repo, self.current_username, self.db_path, self.current_user_id)
                 x, y = positions['daily_activity_totals']
-                win.geometry(f"435x750+{x}+{y}")
+                win.geometry(f"435x700+{x}+{y}")
                 self.open_windows['daily_activity_totals'] = win
             else:
                 self.open_windows['daily_activity_totals'].lift()
     
     def _build_admin_dashboard(self):
         """Build admin interface for managing users and recommendations"""
-        self.geometry("900x700")
+        self.geometry("1050x700")
         self.title(f"Admin Panel - {self.current_admin_username}")
         
         # Admin header
@@ -1836,7 +1836,7 @@ class App(tk.Tk):
             widget.destroy()
         
         # Reset geometry and rebuild login
-        self.geometry("350x500")
+        self.geometry("350x700")
         self._build_login()
 
 def main():

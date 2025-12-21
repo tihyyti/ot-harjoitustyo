@@ -30,15 +30,16 @@ def import_csv(csv_path: str, db_path: str = DB_PATH):
         for row in reader:
             name = row.get("name")
             try:
-                calories = float(row.get("calories_per_activity") or 0.0)
-
+                # Support both old and new CSV formats
+                calories = float(row.get("calories_per_activity") or row.get("kcal_per_unit") or 0.0)
             except ValueError:
                 print("Skipping invalid row:", row)
                 continue
 
             activity_id = str(uuid.uuid4())
+            # Use correct column name: kcal_per_unit (not calories_per_activity)
             cur.execute("""
-                INSERT INTO activity (activity_id, name, calories_per_activity)
+                INSERT INTO activity (activity_id, name, kcal_per_unit)
                 VALUES (?, ?, ?)
             """, (activity_id, name, calories))
             inserted += 1

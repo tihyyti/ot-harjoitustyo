@@ -1,0 +1,150 @@
+erDiagram
+    %% Core User Management
+    USER ||--o{ FOODLOG : "logs"
+    USER ||--o{ ACTIVITYLOG : "performs"
+    USER ||--o{ WEIGHTLOG : "tracks"
+    USER ||--o{ STATISTICS : "has"
+    USER ||--o{ USER_RESTRICTION : "has"
+    USER ||--o{ DIETARY_PLAN : "follows"
+    
+    %% Admin/Coach Management
+    ADMIN ||--o{ DIETARY_PLAN : "creates"
+    ADMIN ||--o{ RECOMMENDATION : "provides"
+    
+    %% Food Catalog and Logging
+    FOOD ||--o{ FOODLOG : "tracked_in"
+    ACTIVITY ||--o{ ACTIVITYLOG : "tracked_in"
+    
+    %% Recommendations
+    USER ||--o{ RECOMMENDATION : "receives"
+    
+    USER {
+        string user_id PK
+        string username UK
+        string password_hash
+        string salt
+        float weight "current weight"
+        float length "height in cm"
+        int age
+        int activity_level "1-5 scale"
+        string allergies "deprecated, use USER_RESTRICTION"
+        float kcal_min "daily minimum"
+        float kcal_max "daily maximum"
+        float weight_loss_target "weekly target in kg"
+        timestamp created_at
+    }
+    
+    ADMIN {
+        string admin_id PK
+        string username UK
+        string password_hash
+        string salt
+        timestamp created_at
+    }
+    
+    FOOD {
+        string food_id PK
+        string name
+        float kcal_per_portion "per 100g"
+        float carbs_per_portion "grams per 100g"
+        float protein_per_portion "grams per 100g"
+        float fat_per_portion "grams per 100g"
+    }
+    
+    FOODLOG {
+        string log_id PK
+        string user_id FK
+        string food_id FK
+        string date "YYYY-MM-DD"
+        float portion_size_g "actual portion in grams"
+    }
+    
+    ACTIVITY {
+        string activity_id PK
+        string name
+        string unit "steps, minutes, etc"
+        float kcal_per_unit "per 1000 units"
+    }
+    
+    ACTIVITYLOG {
+        string log_id PK
+        string user_id FK
+        string activity_id FK
+        string date "YYYY-MM-DD"
+        float activity_count "e.g., 5000 steps"
+        float kcal_burned "calculated"
+    }
+    
+    WEIGHTLOG {
+        string log_id PK
+        string user_id FK
+        string date "YYYY-MM-DD"
+        float weight "in kg"
+        string notes
+        timestamp created_at
+    }
+    
+    STATISTICS {
+        string stats_id PK
+        string user_id FK
+        string date UK "YYYY-MM-DD, unique per user"
+        float total_kcal_consumed
+        float total_kcal_burned
+        float net_kcal "consumed minus burned"
+        float total_carbs_g
+        float total_protein_g
+        float total_fat_g
+        float current_weight
+        float weight_change "vs previous day"
+        float breakfast_kcal
+        float lunch_kcal
+        float dinner_kcal
+        float snacks_kcal
+        int food_entries_count
+        int activity_entries_count
+        timestamp created_at
+    }
+    
+    USER_RESTRICTION {
+        string restriction_id PK
+        string user_id FK
+        string restriction_type "allergy, intolerance, preference, medical"
+        string food_ingredient "e.g., lactose, gluten, nuts"
+        string severity "mild, moderate, severe, life-threatening"
+        string notes
+        timestamp created_at
+    }
+    
+    DIETARY_PLAN {
+        string plan_id PK
+        string coach_id FK "references ADMIN"
+        string user_id FK "NULL for templates"
+        string plan_name
+        string description
+        float target_kcal_min
+        float target_kcal_max
+        float target_protein_g
+        float target_carbs_g
+        float target_fat_g
+        float weekly_weight_loss_kg
+        int weekly_exercise_minutes
+        string start_date "YYYY-MM-DD"
+        string end_date "YYYY-MM-DD"
+        string status "active, completed, cancelled"
+        timestamp created_at
+    }
+    
+    RECOMMENDATION {
+        string recommendation_id PK
+        string user_id FK
+        string admin_id FK
+        string recommendation_type
+        string title
+        string description
+        float target_kcal_min
+        float target_kcal_max
+        string suggested_activities
+        string notes
+        timestamp created_at
+        string status "active, archived"
+    }

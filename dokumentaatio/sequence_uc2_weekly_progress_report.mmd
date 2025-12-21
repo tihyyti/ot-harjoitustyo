@@ -1,0 +1,82 @@
+%% Sequence Diagram: UC-2 View Weekly Progress Report
+
+sequenceDiagram
+    actor User
+    participant UI as Statistics Dashboard
+    participant StatsSvc as StatisticsService
+    participant WeightLogRepo as WeightLogRepository
+    participant StatsRepo as StatisticsRepository
+    participant DB as SQLite Database
+    
+    User->>UI: Click "Weekly Report"
+    activate UI
+    
+    UI->>StatsSvc: get_weekly_summary(user_id, start_date)
+    activate StatsSvc
+    Note over StatsSvc: start_date = today - 7 days
+    
+    %% Get daily stats for last 7 days
+    StatsSvc->>StatsRepo: find_by_user_and_date_range(user_id, start_date, end_date)
+    activate StatsRepo
+    StatsRepo->>DB: SELECT * FROM statistics<br/>WHERE user_id = ? AND date BETWEEN ? AND ?<br/>ORDER BY date
+    DB-->>StatsRepo: stats_rows[] (7 days)
+    StatsRepo-->>StatsSvc: daily_stats[]
+    deactivate StatsRepo
+    
+    %% Get weight logs
+    StatsSvc->>WeightLogRepo: get_weight_history(user_id, days=7)
+    activate WeightLogRepo
+    WeightLogRepo->>DB: SELECT * FROM weightlog<br/>WHERE user_id = ? AND date >= ?<br/>ORDER BY date
+    DB-->>WeightLogRepo: weight_rows[]
+    WeightLogRepo-->>StatsSvc: weight_logs[]
+    deactivate WeightLogRepo
+    
+    %% Calculate weekly metrics
+    StatsSvc->>StatsSvc: calculate_average_daily_kcal_consumed()
+    Note over StatsSvc: AVG(total_kcal_consumed) over 7 days
+    
+    StatsSvc->>StatsSvc: calculate_average_daily_kcal_burned()
+    Note over StatsSvc: AVG(total_kcal_burned) over 7 days
+    
+    StatsSvc->>StatsSvc: calculate_total_net_kcal()
+    Note over StatsSvc: SUM(net_kcal) over 7 days
+    
+    StatsSvc->>StatsSvc: calculate_weight_change()
+    Note over StatsSvc: latest_weight - weight_7_days_ago
+    
+    StatsSvc->>StatsSvc: calculate_goal_adherence()
+    Note over StatsSvc: days_within_range = COUNT(days where<br/>kcal_min <= net_kcal <= kcal_max)<br/>adherence_pct = (days_within_range / 7) * 100
+    
+    StatsSvc->>StatsSvc: get_user_weekly_target()
+    Note over StatsSvc: From user.weight_loss_target
+    
+    StatsSvc->>StatsSvc: evaluate_progress()
+    Note over StatsSvc: if weight_change >= target:<br/>  status = "On Track ✅"<br/>elif weight_change >= target * 0.8:<br/>  status = "Close 💪"<br/>else:<br/>  status = "Needs Attention ⚠️"
+    
+    StatsSvc-->>UI: weekly_summary {<br/>  avg_kcal_consumed: 1900,<br/>  avg_kcal_burned: 300,<br/>  total_net_deficit: -2800,<br/>  weight_change: -0.6 kg,<br/>  weight_target: -0.5 kg,<br/>  adherence_pct: 85.7% (6/7 days),<br/>  status: "On Track ✅",<br/>  daily_data: [...],<br/>  nutrient_trends: {...}<br/>}
+    deactivate StatsSvc
+    
+    %% Render Report
+    UI->>UI: Render Weekly Report View
+    
+    UI->>UI: Create Line Chart (Calories)
+    Note over UI: X-axis: 7 days<br/>Y-axis: kcal<br/>Line 1: Consumed (blue)<br/>Line 2: Burned (red)<br/>Line 3: Net (green)
+    
+    UI->>UI: Create Line Chart (Weight)
+    Note over UI: X-axis: 7 days<br/>Y-axis: kg<br/>Line: Actual weight (blue)<br/>Dashed: Target trend (green)
+    
+    UI->>UI: Create Bar Chart (Nutrients)
+    Note over UI: X-axis: Carbs, Protein, Fat<br/>Y-axis: grams<br/>Avg daily intake over 7 days
+    
+    UI->>UI: Create Summary Cards
+    Note over UI: Card 1: Weight Progress<br/>  Lost 0.6 kg (Target: 0.5 kg) ✅<br/><br/>Card 2: Calorie Adherence<br/>  6/7 days within goal (85.7%)<br/><br/>Card 3: Net Deficit<br/>  -2800 kcal this week
+    
+    UI->>UI: Create Recommendations Section
+    Note over UI: "Great work! You're exceeding your<br/>weekly weight loss goal. Keep up<br/>your activity level!"
+    
+    UI-->>User: Display weekly report
+    deactivate UI
+    
+    User->>UI: Click "Export as PDF"
+    UI->>StatsSvc: generate_pdf_report(weekly_summary)
+    Note over UI,StatsSvc: Future feature - export to PDF

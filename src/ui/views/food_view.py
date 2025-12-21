@@ -31,8 +31,8 @@ class FoodLogFrame(tk.Frame):
         # Portion input
         self.portion_var = tk.DoubleVar(value=100.0)
         
-        # Logs list
-        self.logs_list = tk.Listbox(self, height=10, font=("Arial", 10))
+        # Logs list with improved spacing
+        self.logs_list = tk.Listbox(self, height=10, font=("Arial", 12))
         
         self._setup_ui()
         self._load_food_list()
@@ -54,16 +54,28 @@ class FoodLogFrame(tk.Frame):
         tk.Entry(topframe, textvariable=self.date_var, width=15, font=("Arial", 11)).grid(row=2, column=1, sticky="w", padx=5)
         
         tk.Button(topframe, text="Add Food", command=self._on_add, font=("Arial", 11), bg="#90caf9").grid(row=3, column=0, columnspan=2, pady=10)
-        
+
         # Today's logs section
         tk.Label(self, text="Today's Food Log", font=("Arial", 12, "bold")).pack(pady=5)
+        
+        # Add calculation info
+        calc_info = tk.Label(self, text="📊 Calories calculated per 100g portions", 
+                            font=("Arial", 9, "italic"), fg="#2e7d32")
+        calc_info.pack()
+        
+        # Add info about future events
+        info_label = tk.Label(self, text="ℹ️ Future planned meals will appear in 'View All Food Logs'", 
+                             font=("Arial", 9, "italic"), fg="#555")
+        info_label.pack()
+        
         self.logs_list.pack(fill="both", expand=True, padx=10, pady=5)
     
     def _load_food_list(self):
         """Load food list from service"""
-        display = self.food_service.get_food_display_list()
-        self.food_cb["values"] = display
-        if display:
+        # Load names only for clean display
+        display_names = self.food_service.get_food_name_only_list()
+        self.food_cb["values"] = display_names
+        if display_names:
             self.food_cb.current(0)
     
     def _load_todays_logs(self):
@@ -71,27 +83,45 @@ class FoodLogFrame(tk.Frame):
         self.logs_list.delete(0, tk.END)
         date_str = self.date_var.get()
         logs = self.food_service.get_food_logs_by_date(self.user_id, date_str)
-        for log in logs:
-            self.logs_list.insert(tk.END, log)
+        
+        if not logs:
+            self.logs_list.insert(tk.END, "No foods logged for this date")
+            return
+        
+        for log_text in logs:
+            self.logs_list.insert(tk.END, log_text)
     
     def _on_add(self):
-        """Handle add food button"""
+        """Handle add food button with smart feedback"""
+        from datetime import date as date_class
+        
         try:
-            food_str = self.food_var.get()
+            food_name = self.food_var.get().strip()
             portion = self.portion_var.get()
             date_str = self.date_var.get()
             
-            if not food_str:
-                messagebox.showwarning("Input Error", "Please select a food")
+            if not food_name:
+                messagebox.showwarning("Input Required", "Please select a food", parent=self)
                 return
             
-            # Add via service
-            self.food_service.log_food(self.user_id, food_str, portion, date_str)
-            messagebox.showinfo("Success", f"Added {portion}g of {food_str} for {date_str}")
+            # Get food ID by name
+            food_id = self.food_service.get_food_id_by_name(food_name)
+            
+            # Log food using ID (create selection string for compatibility)
+            food_selection = f"{food_name}|{food_id}"
+            self.food_service.log_food(self.user_id, food_selection, portion, date_str)
+            
+            # Show feedback only for future dates
+            today = date_class.today().strftime('%Y-%m-%d')
+            if date_str > today:
+                messagebox.showinfo("Planned!", 
+                                  f"{food_name} scheduled for {date_str}\n\nView in 'All Food Logs'", 
+                                  parent=self)
+            
             self._load_todays_logs()
             
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to add food: {str(e)}")
+            messagebox.showerror("Error", str(e), parent=self)
 
 
 class Dashboard_food(tk.Toplevel):

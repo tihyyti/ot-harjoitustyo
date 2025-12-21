@@ -56,7 +56,7 @@ Each food item must have the following attributes:
 **Activity Logging:**  
 Users can log their daily activities.
 
-Each food item must have the following attributes:
+Each activity item must have the following attributes:
 - Name
 - Date, 
 - Activity_count (as steps), 

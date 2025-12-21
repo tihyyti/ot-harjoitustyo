@@ -1,3 +1,4 @@
+
 # Laihdutanyt Application - Technical Architecture
 
 ##  Architecture Overview
@@ -6,37 +7,37 @@ The Laihdutanyt application follows a **layered architecture** pattern with clea
 
 ```
 ┌─────────────────────────────────────────────────┐
-│         Presentation Layer (UI)                  │
-│  - Login/Register Views                          │
+│         Presentation Layer (UI)                 │
+│  - Login/Register Views                         │
 │  - Dashboard Views (Food, Activity, Totals)     │
-│  - Admin Panel Views                             │
+│  - Admin Panel Views                            │
 │  - UI Components (Frames, Dialogs)              │
 └──────────────────┬──────────────────────────────┘
                    │
 ┌──────────────────▼──────────────────────────────┐
-│         Business Logic Layer (Services)          │
-│  - UserService                                   │
-│  - FoodService                                   │
-│  - ActivityService                               │
-│  - AdminService                                  │
+│         Business Logic Layer (Services)         │
+│  - UserService                                  │
+│  - FoodService                                  │
+│  - ActivityService                              │
+│  - AdminService                                 │
 └──────────────────┬──────────────────────────────┘
                    │
 ┌──────────────────▼──────────────────────────────┐
-│         Data Access Layer (Repositories)         │
-│  - UserRepository                                │
-│  - FoodRepository                                │
-│  - ActivityRepository                            │
-│  - FoodLogRepository                             │
-│  - ActivityLogRepository                         │
-│  - AdminRepository                               │
+│         Data Access Layer (Repositories)        │
+│  - UserRepository                               │
+│  - FoodRepository                               │
+│  - ActivityRepository                           │
+│  - FoodLogRepository                            │
+│  - ActivityLogRepository                        │
+│  - AdminRepository                              │
 └──────────────────┬──────────────────────────────┘
                    │
 ┌──────────────────▼──────────────────────────────┐
-│         Data Layer (Database)                    │
+│         Data Layer (Database)                   │
 │  - SQLite Database (laihdutanyt.db)             │
 │  - Tables: user, food, activity, foodlog,       │
 │    activitylog, admin, recommendation,          │
-│    user_constraint                               │
+│    user_constraint                              │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -154,7 +155,9 @@ def _on_login(self):
 **Example Services**:
 - `UserService`: Authentication, registration, user profile management
 - `FoodService`: Food logging, daily totals calculation, CRUD operations
-- `ActivityService`: Activity logging, calorie burning calculations
+- `ActivityService`: Activity logging, calorie burning 
+- 'Weight Logging' : Weight evolution tracking
+- 'Periodical Diets' : To find out best fit diet mix based on experimenting 
 - `AdminService`: Recommendations, constraints, user management
 
 ### 3. Data Access Layer (Repositories)
@@ -187,6 +190,7 @@ def _on_login(self):
 - `activity`: Activity catalog
 - `foodlog`: User food entries
 - `activitylog`: User activity entries
+- 'weightlog' : User weight tracking entries
 - `recommendation`: Admin recommendations
 - `user_constraint`: User health constraints
 
@@ -408,7 +412,7 @@ classDiagram
 - Easy to test with mock databases
 - Clear dependencies
 
-## 🔧 Benefits of This Architecture
+##  Benefits of This Architecture
 
 ### Maintainability
 -  Each module has single responsibility
@@ -460,7 +464,7 @@ classDiagram
 ##  Coding Guidelines
 
 ### Service Layer
-```python
+
 #  Good: Clean service method
 def log_food(self, user_id: str, food_selection: str, portion_g: float, date_str: str):
     food_id = self._parse_food_id(food_selection)
@@ -471,10 +475,9 @@ def log_food(self, user_id: str, food_selection: str, portion_g: float, date_str
 def log_food(self):
     food = self.food_dropdown.get()  # UI dependency!
     messagebox.showinfo("Success", "Logged!")  # UI code!
-```
 
 ### UI Layer
-```python
+
 #  Good: UI delegates to service
 def _on_log_food(self):
     try:
@@ -492,10 +495,9 @@ def _on_log_food(self):
     # Direct database access!
     conn = sqlite3.connect(self.db_path)
     ...
-```
 
 ### Repository Layer
-```python
+
 #  Good: Clean data access
 def find_by_username(self, username: str) -> Optional[User]:
     with self._conn() as conn:
@@ -509,7 +511,6 @@ def find_and_validate_user(self, username: str, password: str):  # Too much logi
     user = self.find_by_username(username)
     if user and self._check_password(password):  # Validation logic!
         return user
-```
 
 ##  References
 
@@ -517,8 +518,7 @@ def find_and_validate_user(self, username: str, password: str):  # Too much logi
 - [Repository Pattern](https://martinfowler.com/eaaCatalog/repository.html)
 - [Layered Architecture](https://en.wikipedia.org/wiki/Multitier_architecture)
 
----
 
-**Document Version**: 1.0  
+**Document Version**: 1.1  
 **Last Updated**: December 9, 2025  
-**Author**: In co-operation with Claude 4.5 AI
+**Author**: In co-design with Claude 4.5 AI

@@ -69,3 +69,27 @@ class Statistics:
     total_kcal_consumed: float
     total_weight: float
     weight_change: float
+
+
+@dataclass
+class WeightLog:
+    log_id: str
+    user_id: str
+    date: str
+    weight: float
+    notes: Optional[str] = None
+    created_at: Optional[str] = None
+
+
+@dataclass
+class DietaryPeriod:
+    period_id: str
+    user_id: str
+    start_date: str
+    period_name: str
+    end_date: Optional[str] = None
+    description: Optional[str] = None
+    protocol_type: Optional[str] = None
+    notes: Optional[str] = None
+    is_active: int = 1
+    created_at: Optional[str] = None

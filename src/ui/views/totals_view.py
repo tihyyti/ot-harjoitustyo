@@ -20,6 +20,7 @@ class Dashboard_daily_foods_totals(tk.Toplevel):
                  food_service: FoodService, username: str, user_id: str):
         super().__init__(master)
         self.title(f"Daily Food Totals - {username}")
+        self.geometry("500x700") 
         self.master = master
         self.username = username
         self.user_id = user_id
@@ -46,14 +47,19 @@ class Dashboard_daily_foods_totals(tk.Toplevel):
         tk.Button(nav_frame, text="Refresh", command=self.refresh_totals, 
                  font=("Arial", 12), bg="#90caf9").pack(side="right", padx=5)
         
+        # Add calculation info
+        calc_info = tk.Label(self, text="📊 Food calories calculated per 100g portions", 
+                            font=("Arial", 10, "italic"), fg="#2e7d32")
+        calc_info.pack(pady=(5,0))
+        
         # Treeview styling
         style = ttk.Style()
-        style.configure("Custom.Treeview", font=("Arial", 11), rowheight=25)
-        style.configure("Custom.Treeview.Heading", font=("Arial", 12, "bold"))
+        style.configure("FoodTotals.Treeview", font=("Arial", 11), rowheight=25)
+        style.configure("FoodTotals.Treeview.Heading", font=("Arial", 12, "bold"))
         
         # Create treeview
         columns = ("date", "total_kcal", "entries")
-        self.tree = ttk.Treeview(self, columns=columns, show="headings", selectmode="browse", style="Custom.Treeview")
+        self.tree = ttk.Treeview(self, columns=columns, show="headings", selectmode="browse", style="FoodTotals.Treeview")
         self.tree.heading("date", text="Date")
         self.tree.heading("total_kcal", text="Total Calories (kcal)")
         self.tree.heading("entries", text="# of Entries")
@@ -76,14 +82,23 @@ class Dashboard_daily_foods_totals(tk.Toplevel):
     
     def refresh_totals(self):
         """Refresh totals using service layer with date categorization"""
+        # Clear existing rows
         for r in self.tree.get_children():
             self.tree.delete(r)
         
         # Get data from service (includes date categorization)
         totals = self.food_service.get_daily_food_totals(self.user_id)
         
+        # Debug: Check if we got data
+        if not totals:
+            # No data - insert a message row
+            self.tree.insert("", "end", values=("No food data", "", ""))
+            return
+        
+        # Insert data rows
         for item in totals:
-            self.tree.insert("", "end", values=(item['date'], item['total_kcal'], item['entries']), 
+            self.tree.insert("", "end", 
+                           values=(item['date'], item['total_kcal'], item['entries']), 
                            tags=(item['category'],))
 
 
@@ -94,6 +109,7 @@ class Dashboard_daily_activities_totals(tk.Toplevel):
                  activity_service: ActivityService, username: str, user_id: str):
         super().__init__(master)
         self.title(f"Daily Activity Totals - {username}")
+        self.geometry("500x700") 
         self.master = master
         self.username = username
         self.user_id = user_id
@@ -120,42 +136,57 @@ class Dashboard_daily_activities_totals(tk.Toplevel):
         tk.Button(nav_frame, text="Refresh", command=self.refresh_totals, 
                  font=("Arial", 12), bg="#a5d6a7").pack(side="right", padx=5)
         
+        # Add calculation info
+        calc_info = tk.Label(self, text="📊 Calories burned calculated per 1000 units (e.g., steps)", 
+                            font=("Arial", 10, "italic"), fg="#1976d2")
+        calc_info.pack(pady=(5,0))
+        
         # Treeview styling
         style = ttk.Style()
-        style.configure("Activity.Treeview", font=("Arial", 11), rowheight=25)
-        style.configure("Activity.Treeview.Heading", font=("Arial", 12, "bold"))
+        style.configure("ActivityTotals.Treeview", font=("Arial", 12), rowheight=25)
+        style.configure("ActivityTotals.Treeview.Heading", font=("Arial", 12, "bold"))
         
         # Create treeview
-        columns = ("date", "total_kcal_burned", "entries")
-        self.tree = ttk.Treeview(self, columns=columns, show="headings", selectmode="browse", style="Activity.Treeview")
+        columns = ("date", "total_kcal", "entries")
+        self.tree = ttk.Treeview(self, columns=columns, show="headings", selectmode="browse", style="ActivityTotals.Treeview")
         self.tree.heading("date", text="Date")
-        self.tree.heading("total_kcal_burned", text="Calories Burned (kcal)")
+        self.tree.heading("total_kcal", text="Calories Burned (kcal)")
         self.tree.heading("entries", text="Activities")
-        
+
         self.tree.column("date", width=180, anchor="center")  # Wider for "📍 TODAY"
-        self.tree.column("total_kcal_burned", width=200, anchor="center")
+        self.tree.column("total_kcal", width=180, anchor="center")
         self.tree.column("entries", width=120, anchor="center")
         
         self.tree.pack(fill="both", expand=True, padx=10, pady=10)
         
-        # Configure tags
+        # Configure tags for date highlighting
         self.tree.tag_configure('past', background='white')
-        self.tree.tag_configure('today', background='#ffffcc', font=("Arial", 11, "bold"))
+        self.tree.tag_configure('today', background='#ffffcc', font=("Arial", 12, "bold"))
         self.tree.tag_configure('future', background='#e8f5e9')
         
         self.refresh_totals()
     
     def _back_to_menu(self):
         self.destroy()
-    
+            
     def refresh_totals(self):
         """Refresh totals using service layer with date categorization"""
+        # Clear existing rows
         for r in self.tree.get_children():
             self.tree.delete(r)
         
         # Get data from service (includes date categorization)
         totals = self.activity_service.get_daily_activity_totals(self.user_id)
         
+        # Debug: Check if we got data
+        if not totals:
+            # No data - insert a message row
+            self.tree.insert("", "end", values=("No activity data", "", ""))
+            return
+        
+        # Insert data rows
         for item in totals:
-            self.tree.insert("", "end", values=(item['date'], item['total_kcal'], item['entries']), 
+            self.tree.insert("", "end", 
+                           values=(item['date'], item['total_kcal_burned'], item['entries']), 
                            tags=(item['category'],))
+
