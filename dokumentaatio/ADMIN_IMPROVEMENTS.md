@@ -92,7 +92,7 @@ admin_note = tk.Label(
 
 **Current Admin Management**:
 - Admin accounts are created directly in the `admin` table via database
-- Default admin: username=`admin`, password=`admin123`
+- Default admin: username=`admin`, password=`apass`
 - No GUI for admin creation (intentional security measure)
 
 **For Production Use**:
