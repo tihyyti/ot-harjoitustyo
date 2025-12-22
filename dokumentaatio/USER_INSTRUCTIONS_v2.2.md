@@ -101,7 +101,7 @@ When you launch the app, you'll see:
 
 **Admin (Stub Only):**
 - Username: `admin`
-- Password: `admin`
+- Password: `apass`
 
 ### Creating a New Account
 
