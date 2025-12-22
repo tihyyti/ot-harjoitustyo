@@ -93,7 +93,7 @@ tk.Button(
 
 ### Admin Login Flow
 1. User clicks "Admin Login" button in login window
-2. Enters admin credentials (username: `admin`, password: `admin123`)
+2. Enters admin credentials (username: `admin`, password: `apass`)
 3. Login successful → Admin menu appears (420x300 window)
 4. Admin menu shows:
    - Admin username at top
@@ -238,7 +238,7 @@ tk.Button(
 
 ## Notes
 
-- Admin credentials: username `admin`, password `admin123`
+- Admin credentials: username `admin`, password `apass`
 - Admin stub is intentionally non-functional to demonstrate roadmap
 - Self-service mode allows users to manage their own data without admin intervention
 - This is suitable for current use case (personal/small group usage)
